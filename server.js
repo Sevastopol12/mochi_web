@@ -9,19 +9,41 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const app = express();
+const pm = new ProductManager();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Set view engine
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.json());
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 // Define routes
-app.get('/', (req, res) => {
-  res.render('homepage', { title: 'Home Page' });
+app.route('/')
+.get((req, res) => {
+  req.render('hompage', {title: 'Home page'})
+})
+
+app.get('/product', (req, res) => {
+  res.render('product', { title: 'product' });
 });
+
+
+// AJAX
+app.get('/api/product', async (req, res) => {
+  try {
+    const list = await pm.listAll();
+    res.json(list);
+  } 
+  catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+
 
 // Start server
 app.listen(3000, () => {
