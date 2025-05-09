@@ -14,7 +14,7 @@ class ProductManager {
   }
 
   // Add a product
-  async addProduct({product_id, name, price, quantity}) {
+  async add({product_id, name, price, quantity}) {
     let db = await this.dbPromsie;
     let products = db.collection('products');
 
@@ -32,14 +32,14 @@ class ProductManager {
   }
 
   // Remove a product 
-  async removeProduct({product_id}) {
+  async remove({product_id}) {
     let db = await this.dbPromsie;
     let products = db.collection('products');
     
-      // Validate product existence
+    // Validate product existence
     let product = products.findOne({_id: ObjectId(product_id)});
 
-    // return the product if it existed
+    // Return the product if it existed
     if (product !== nul) {
       await products.deleteOne({_id: ObjectId(product_id)})
     }

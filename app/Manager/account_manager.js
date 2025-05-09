@@ -13,7 +13,7 @@ class AccountManager {
   }
 
   // Add an account
-  async addAccount({name, password, email, phone_number }) {
+  async add({name, password, email, phone_number }) {
     let db = await this.dbPromise;
     let accountsCollection = db.collection('accounts');
     let new_account = new User(name, password, email, phone_number);
@@ -65,7 +65,7 @@ class AccountManager {
   }
 
   // Delete an account by its id
-  async removeAccount(id) {
+  async remove(id) {
     let db = await this.dbPromise; 
     let accountsCollection = db.collection('accounts');
 
