@@ -1,7 +1,5 @@
 import Product from "../Product/product.js";
 import AppConfig from "../Config.js";
-import { ObjectId } from "mongodb";
-
 
 /**
  * A class that works with the product database, have all access and permission to manipulate the product database
