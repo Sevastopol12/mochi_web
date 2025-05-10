@@ -21,28 +21,28 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 // Define routes
+// Homepage
 app.route('/')
-.get((req, res) => {
-  req.render('hompage', {title: 'Home page'})
+.get(async (req, res) => {
+  console.log(await pm.listAll())
+  res.render('homepage', {title: 'Home page'})
 })
-
+// Product 
 app.get('/product', (req, res) => {
   res.render('product', { title: 'product' });
+  app.route('/api/products');
 });
 
-
 // AJAX
-app.get('/api/product', async (req, res) => {
+app.get('/api/products', async (req, res) => {
   try {
-    const list = await pm.listAll();
-    res.json(list);
-  } 
+    let response = await pm.listAll();
+    res.json(response);
+  }
   catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
-
-
 
 
 // Start server
