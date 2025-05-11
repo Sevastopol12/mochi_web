@@ -27,13 +27,16 @@ app.route('/')
   console.log(await pm.listAll())
   res.render('homepage', {title: 'Home page'})
 })
-// Product 
+
+
+// Product page
 app.get('/product', (req, res) => {
   res.render('product', { title: 'product' });
   app.route('/api/products');
 });
 
-// AJAX
+
+// AJAX service: GET product API
 app.get('/api/products', async (req, res) => {
   try {
     let response = await pm.listAll();
