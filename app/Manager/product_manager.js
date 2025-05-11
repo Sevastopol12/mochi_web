@@ -1,13 +1,13 @@
+import BaseManager from './base_manager.js';
 import Product from "../Product/product.js";
 import AppConfig from "../Config.js";
 
-/**
- * A class that works with the product database, have all access and permission to manipulate the product database
- */
 class ProductManager {
+  /**
+   * A class that works with the product database, have all access and permission to manipulate the product database
+  */
   constructor() {
-    this.config = new AppConfig();
-    this.dbPromise = this.config.initDB()
+    super(config, dbPromise);
     this.collection = 'products';
   }
 

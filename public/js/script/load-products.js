@@ -6,12 +6,13 @@ import ProductModel from '../models/ProductModel.js';
 
 // Built-in shopping cart
 const cart = {};  
-let bsCartOffcanvas;
 
 document.addEventListener('DOMContentLoaded', async () => {
-  const container = document.getElementById('product-list');
   const model = new ProductModel();
-  // Cart items
+
+  // Target product-list section
+  const container = document.getElementById('product-list');
+  // Cart item
   const commitBtn  = document.getElementById('commit-btn');
 
   // Fetch products
