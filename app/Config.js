@@ -9,7 +9,7 @@ class AppConfig {
       this.env = process.env.NODE_ENV || 'development';
       this.dbClient = null; // MongoDB client
       this.dbname = 'mochi_shop';
-      this.uri = 'mongodb+srv://Sevastopol:230503@cluster0.brlhdtd.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+      this.uri = null;
       AppConfig.instance = this;
     }
 
