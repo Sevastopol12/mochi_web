@@ -9,6 +9,7 @@ class AppConfig {
       this.env = process.env.NODE_ENV || 'development';
       this.dbClient = null; // MongoDB client
       this.dbname = 'mochi_shop';
+      this.uri = 'mongodb+srv://Sevastopol:230503@cluster0.brlhdtd.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
       AppConfig.instance = this;
     }
 
@@ -18,11 +19,17 @@ class AppConfig {
   // Init database
   async initDB() {
     if (!this.dbClient) {
-      const uri = process.env.MONGO_URI || 'mongodb://localhost:27017'; // Pass in mongoDB uri
+      const uri = process.env.MONGO_URI || this.uri;
 
       try {
-        this.dbClient = new MongoClient(uri);
+        this.dbClient = new MongoClient(this.uri, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        tls: true,
+        tlsAllowInvalidCertificates: true
+      });
         await this.dbClient.connect();
+        
         console.log('Connected to MongoDB');
       } 
       
@@ -32,7 +39,7 @@ class AppConfig {
       }
     }
     
-    return this.dbClient.db(this.dbName);
+    return this.dbClient.db(this.dbname);
   }
 
 }
