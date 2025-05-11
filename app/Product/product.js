@@ -1,17 +1,22 @@
+/**
+ * Declare a Product Object
+ */
+
 class Product {
-  constructor({ id, name, price, quantity_in_stock }) {
+  constructor({ id, name, price, quantity }) {
     this.id = id;
     this.name = name;
     this.price = price;
-    this.quantity_in_stock = quantity_in_stock
+    this.quantity = quantity
   }
 
   getInfo() {
     return `${this.name} (ID: ${this.id}) $${this.price.toFixed(2)}`;
   }
 
+  // Validate whether the product is in-stock
   isInStock(quantity=1) {
-    return this.quantity_in_stock >= quantity;
+    return this.quantity >= quantity;
   }
 
 }

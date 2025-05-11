@@ -1,15 +1,16 @@
-import AppConfig from '../Config.js'
-import User from '../Account/user.js'
-import Admin from '../Account/admin.js'
+import BaseManager from './base_manager.js';
+import AppConfig from '../Config.js';
+import User from '../Account/user.js';
+import Admin from '../Account/admin.js';
 import { ObjectId } from 'mongodb';
 
-/**
- * A class that works with the Account database, have all access and permission to manipulate the Account database
- */
-class AccountManager {
+class AccountManager extends BaseManager {
+  /**
+   * A class that works with the Account database, have all access and permission to manipulate the Account database
+  */
   constructor() {
-    this.config = new AppConfig();
-    this.dbPromise = this.config.initDB();
+    super(config, dbPromise);
+    this.collection = 'accounts';
   }
 
   // Add an account
