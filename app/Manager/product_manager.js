@@ -7,7 +7,7 @@ class ProductManager {
    * A class that works with the product database, have all access and permission to manipulate the product database
   */
   constructor() {
-    super(config, dbPromise);
+    super(config, dbPromise)
     this.collection = 'products';
   }
 

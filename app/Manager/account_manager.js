@@ -9,7 +9,7 @@ class AccountManager extends BaseManager {
    * A class that works with the Account database, have all access and permission to manipulate the Account database
   */
   constructor() {
-    super(config, dbPromise);
+    super(config, dbPromise)
     this.collection = 'accounts';
   }
 
