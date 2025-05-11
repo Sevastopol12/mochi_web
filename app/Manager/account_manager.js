@@ -9,14 +9,14 @@ class AccountManager extends BaseManager {
    * A class that works with the Account database, have all access and permission to manipulate the Account database
   */
   constructor() {
-    super(config, dbPromise)
+    super();
     this.collection = 'accounts';
   }
 
   // Add an account
   async add({name, password, email, phone_number }) {
     let db = await this.dbPromise;
-    let accountsCollection = db.collection('accounts');
+    let accountsCollection = db.collection(this.collection);
     let new_account = new User(name, password, email, phone_number);
 
     try {
@@ -34,7 +34,7 @@ class AccountManager extends BaseManager {
   // Find and returns account by username
   async getByUsername(username) {
     let db = await this.dbPromise;
-    let accountsCollection = db.collection('accounts');
+    let accountsCollection = db.collection(this.collection);
 
     try {
       let account = await accountsCollection.findOne({username: username});

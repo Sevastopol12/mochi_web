@@ -1,16 +1,12 @@
-import AppConfig from "../Config"
+import AppConfig from "../Config.js"
 
 export default class BaseManager {
     /**
      * Design to be an abstract class, defining fundamental attributes/methods for Manager-based classes
      */
     constructor() {
-        if (Object.getPrototypeOf(this) === AbstractClass.prototype) {
-            throw new Error("AbstractClass cannot be instantiated directly.");
-            }
         this.config = new AppConfig();
-        this.promise = this.config.initDB();
-        this.collection = '';
+        this.dbPromise = this.config.initDB();
     }
 
     async add() {

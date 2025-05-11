@@ -7,14 +7,14 @@ class ProductManager extends BaseManager{
    * A class that works with the product database, have all access and permission to manipulate the product database
   */
   constructor() {
-    super(config, dbPromise)
+    super();
     this.collection = 'products';
   }
 
   // Add a product
   async add({product_id, name, price, quantity}) {
     let db = await this.dbPromise;
-    let products = db.collection('products');
+    let products = db.collection(this.collection);
 
     // Create a new product and add it into the database
     try {
@@ -32,7 +32,7 @@ class ProductManager extends BaseManager{
   // Remove a product 
   async remove({product_id}) {
     let db = await this.dbPromise;
-    let products = db.collection('products');
+    let products = db.collection(this.collection);
     
     // Validate product existence
     let product = products.findOne({id: product_id});
@@ -61,7 +61,7 @@ class ProductManager extends BaseManager{
   // Return all product in the database
   async listAll() {
     let db = await this.dbPromise;
-    let products = db.collection('products');
+    let products = db.collection(this.collection);
 
     // Get all existing product
     let all_products = products.find({});
