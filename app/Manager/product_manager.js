@@ -1,91 +1,63 @@
 import Product from "../Product/product.js";
 import AppConfig from "../Config.js";
+import BaseManager from "./base_manager.js";
 
-/**
- * A class that works with the product database, have all access and permission to manipulate the product database
- */
-class ProductManager {
+class ProductManager extends BaseManager {
   constructor() {
-    this.config = new AppConfig();
-    this.dbPromise = this.config.initDB()
+    super();
     this.collection = 'products';
   }
 
-  // Add a product
-  async add({product_id, name, price, quantity}) {
-    let db = await this.dbPromise;
-    let products = db.collection('products');
+  async add({ product_id, name, price, quantity }) {
+    let db = await this.promise;
+    let products = db.collection(this.collection);
 
-    // Create a new product and add it into the database
     try {
-      let new_product = new Product({id: product_id, name: name, price: price, quantity: quantity});
+      let new_product = new Product({ id: product_id, name, price, quantity });
       await products.insertOne(new_product);
       return this;
-    }
-
-    catch (error) {
-      console.error('Error adding account to database:', error);
+    } catch (error) {
+      console.error('Error adding product to database:', error);
       throw error;
     }
   }
 
-  // Remove a product 
-  async remove({product_id}) {
-    let db = await this.dbPromise;
-    let products = db.collection('products');
-    
-    // Validate product existence
-    let product = products.findOne({id: product_id});
+  async remove({ product_id }) {
+    let db = await this.promise;
+    let products = db.collection(this.collection);
 
-    // Return the product if it existed
+    let product = await products.findOne({ id: product_id });
+
     if (product !== null) {
-      await products.deleteOne({id: product_id})
+      await products.deleteOne({ id: product_id });
     }
-    else {return this;} // return self else
+
+    return this;
   }
 
-  // Update product quantity 
   async updateQuantity(product, add_quantity) {
-    let db = await this.dbPromise;
-    let products = db.collection('products');
-    let new_quantity = product.quantity + add_quantity
+    let db = await this.promise;
+    let products = db.collection(this.collection);
+    let new_quantity = product.quantity + add_quantity;
 
     await products.updateOne(
-      {id: product.id},
-      {$set: {quantity, new_quantity}}
+      { id: product.id },
+      { $set: { quantity: new_quantity } }
     );
 
-      return this;
+    return this;
   }
 
-  // Return all product in the database
   async listAll() {
-    let db = await this.dbPromise;
-    let products = db.collection('products');
-
-    // Get all existing product
-    let all_products = products.find({});
-
-    if (all_products !== null){
-      all_products = all_products.toArray();
-      return all_products;
-    }
-
-    else {return null;}
-
+    let db = await this.promise;
+    let products = db.collection(this.collection);
+    return products.find({}).toArray();
   }
 
-  // Find a product using its id
   async findById(product_id) {
-    let db = await this.dbPromise;
-    let products = db.collection('products');
-
-    // Validate product existence
-    let product_exist = products.findOne({id: product_id});
-
-    if (product_exist !== nul) {return product_exist;} // return the product if it existed
-    else {return null;} // return null else
-
+    let db = await this.promise;
+    let products = db.collection(this.collection);
+    return await products.findOne({ id: product_id }) || null;
   }
 }
 

@@ -1,34 +1,47 @@
 import AppConfig from '../Config.js'
+import BaseManager from './base_manager.js';
 
 /**
  * This class handles revenue-related info. Works directly with order collection. 
  */
+class ReveCounter extends BaseManager {
+  constructor() {
+    super();
+    this.order_collection = 'order';
+    this.sales_collection = 'sales';
+  }
 
-class ReveCounter {
-    constructor() {
-        this.config = new AppConfig();
-        this.db_promise = this.config.initDB();
-        this.order_collection = 'order';
-        this.sales_collection = 'sales';
-    }
+  // Not applicable for revenue — implement as empty or throw
+  async add() {
+    throw new Error("ReveCounter does not support add()");
+  }
 
-    //Summarize revenue
-    async revenue() {
-        let db = await this.db_promise;
-        let orders = db.collection(this.order_collection);
+  async remove() {
+    throw new Error("ReveCounter does not support remove()");
+  }
 
-        // Report status
-        let total_revenue = 0;
-        orders.array.forEach(order => {total_revenue += order.total;});
+  async listAll() {
+    let db = await this.promise;
+    let orders = db.collection(this.order_collection);
+    return orders.find({}).toArray();
+  }
 
-        return total_revenue;
-    }
+  async revenue() {
+    let db = await this.promise;
+    let orders = await db.collection(this.order_collection).find({}).toArray();
 
-    async product_sales() {
-        let db = await this.db_promise; 
-        let sales_collection = db.collection(this.sales_collection);
-        return sales_collection;
-    }
+    let total_revenue = 0;
+    orders.forEach(order => {
+      total_revenue += order.total || 0;
+    });
 
-    
+    return total_revenue;
+  }
+
+  async product_sales() {
+    let db = await this.promise;
+    return db.collection(this.sales_collection);
+  }
 }
+
+export default ReveCounter;

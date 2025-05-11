@@ -2,41 +2,35 @@ import AppConfig from '../Config.js'
 import User from '../Account/user.js'
 import Admin from '../Account/admin.js'
 import { ObjectId } from 'mongodb';
+import BaseManager from './base_manager.js';
 
-/**
- * A class that works with the Account database, have all access and permission to manipulate the Account database
- */
-class AccountManager {
+class AccountManager extends BaseManager {
   constructor() {
-    this.config = new AppConfig();
-    this.dbPromise = this.config.initDB();
+    super();
+    this.collection = 'accounts';
   }
 
-  // Add an account
-  async add({name, password, email, phone_number }) {
-    let db = await this.dbPromise;
-    let accountsCollection = db.collection('accounts');
+  async add({ name, password, email, phone_number }) {
+    let db = await this.promise;
+    let accountsCollection = db.collection(this.collection);
     let new_account = new User(name, password, email, phone_number);
 
     try {
       let result = await accountsCollection.insertOne(new_account);
       new_account.id = result.insertedId.toString();
       return this;
-    } 
-    
-    catch (error) {
+    } catch (error) {
       console.error('Error adding account to database:', error);
       throw error;
     }
   }
 
-  // Find and returns account by username
   async getByUsername(username) {
-    let db = await this.dbPromise;
-    let accountsCollection = db.collection('accounts');
+    let db = await this.promise;
+    let accountsCollection = db.collection(this.collection);
 
     try {
-      let account = await accountsCollection.findOne({username: username});
+      let account = await accountsCollection.findOne({ username: username });
       if (account) {
         return account.role === 'admin'
           ? new Admin(
@@ -56,27 +50,29 @@ class AccountManager {
               account._id.toString()
             );
       }
-    } 
-  
-  catch (error) {
-    console.error(`Error getting account by username "${username}" from database:`, error);
-    throw error;
-  }
+    } catch (error) {
+      console.error(`Error getting account by username "${username}" from database:`, error);
+      throw error;
+    }
   }
 
-  // Delete an account by its id
   async remove(id) {
-    let db = await this.dbPromise; 
-    let accountsCollection = db.collection('accounts');
+    let db = await this.promise;
+    let accountsCollection = db.collection(this.collection);
 
     try {
-      let result = await accountsCollection.deleteOne({ _id: ObjectId(id)});
+      let result = await accountsCollection.deleteOne({ _id: ObjectId(id) });
       return result.deletedCount > 0;
-    } 
-    catch (error) {
+    } catch (error) {
       console.error(`Error removing account with ID "${id}" from database:`, error);
       throw error;
     }
+  }
+
+  async listAll() {
+    let db = await this.promise;
+    let accountsCollection = db.collection(this.collection);
+    return accountsCollection.find({}).toArray();
   }
 }
 
