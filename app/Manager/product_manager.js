@@ -2,7 +2,7 @@ import BaseManager from './base_manager.js';
 import Product from "../Product/product.js";
 import AppConfig from "../Config.js";
 
-class ProductManager {
+class ProductManager extends BaseManager{
   /**
    * A class that works with the product database, have all access and permission to manipulate the product database
   */
