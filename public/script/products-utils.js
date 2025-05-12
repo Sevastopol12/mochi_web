@@ -1,15 +1,12 @@
-import ProductController from "../controllers/ProductController.js";
-
 /**
  * Built on AJAX/webservice's convention. Loads the product-list element internally.
 */
 
 // Built-in shopping cart
 const cart = {};  
+const address = "";
 
 document.addEventListener('DOMContentLoaded', async () => {
-  const controller = new ProductController();
-
   // Target product-list section
   const container = document.getElementById('product-list');
 
@@ -18,7 +15,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Fetch products
   try {
-    const products = await controller.listAll();
+    const products = await (await fetch('/api/products')).json();
 
     // No products
     if (!products || products.length < 1) {
@@ -119,32 +116,33 @@ function renderCart() {
 
 // POST 'api/order/': Commit order
 function commitOrder() {
-  const items = Object.values(cart).map(e => ({
+  let items = Object.values(cart).map(e => ({
     product: e.product,
     quantity:  e.qty
   }));
+
 
   fetch('/api/order', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ items })
   })
-    .then(res => {
-      if (!res.ok) throw new Error('Order failed');
-      return res.json();
-    })
-    .then(({ orderId }) => {
-      alert(`Order #${orderId} committed!`);
+  .then(res => {
+    if (!res.ok) throw new Error('Order failed');
+    return res.json();
+  })
+  .then(({ orderId }) => {
+    alert(`Order #${orderId} committed!`);
 
-      // Clear cart
-      Object.keys(cart).forEach(k => delete cart[k]);
-      renderCart();
-      
-      // Reset all card badges
-      document.querySelectorAll('.qty-value').forEach(s => s.textContent = '0');
-    })
-    .catch(err => {
-      console.error(err);
-      alert('Failed to commit order.');
-    });
+    // Clear cart
+    Object.keys(cart).forEach(k => delete cart[k]);
+    renderCart();
+    
+    // Reset all card badges
+    document.querySelectorAll('.qty-value').forEach(s => s.textContent = '0');
+  })
+  .catch(err => {
+    console.error(err);
+    alert('Failed to commit order.');
+  });
 }
