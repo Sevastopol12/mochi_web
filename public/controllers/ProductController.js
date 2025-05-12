@@ -1,7 +1,8 @@
-export default class ProductModel {
-  constructor(base = '/api/products') {
+export default class ProductController {
+  constructor(base='/api/products') {
     this.base = base;
   }
+  
   // GET
   async listAll() {
     let response = await fetch(this.base);

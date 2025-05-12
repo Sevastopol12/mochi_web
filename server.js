@@ -1,15 +1,17 @@
-import AccountManager from './app/Manager/account_manager.js';
-import ProductManager from './app/Manager/product_manager.js';
-import Product from './app/Product/product.js';
-import User from './app/Account/user.js';
-import Admin from './app/Account/admin.js';
-import AppConfig from './app/Config.js';
+import AccountManager from './models/Manager/account_manager.js';
+import ProductManager from './models/Manager/product_manager.js';
+import OrderManager from './models/Manager/order_manager.js';
+import Product from './models/Product/product.js';
+import User from './models/Account/user.js';
+import Admin from './models/Account/admin.js';
+import AppConfig from './models/Config.js';
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
 const app = express();
 const pm = new ProductManager();
+const om = new OrderManager();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -32,7 +34,6 @@ app.route('/')
 // Product page
 app.get('/product', (req, res) => {
   res.render('product', { title: 'product' });
-  app.route('/api/products');
 });
 
 
@@ -44,6 +45,18 @@ app.get('/api/products', async (req, res) => {
   }
   catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+
+app.post('/api/order', async (req, res) => {
+  try {
+    let { products } = req.body;
+    let my_order = om.create(products=products)
+  }
+
+  catch(err) {
+
   }
 });
 

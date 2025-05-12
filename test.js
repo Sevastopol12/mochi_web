@@ -1,6 +1,6 @@
-let list = [{'name': 'a', 'price': 100}, {'name': 'a', 'price': 100}]
+let a = [{'name': 20, 'qty': 10}]
 
 let total = 0;
-list.forEach(x => {total += x.price;})
+a.forEach(x => total += x['name'] * x['qty'])
 
-console.log(total);
+console.log(total)

@@ -1,5 +1,4 @@
 import BaseManager from './base_manager.js';
-import AppConfig from '../Config.js';
 import User from '../Account/user.js';
 import Admin from '../Account/admin.js';
 import { ObjectId } from 'mongodb';

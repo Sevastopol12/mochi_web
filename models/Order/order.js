@@ -1,27 +1,37 @@
-class Order {
+export default class Order {
     constructor(id, products, date) {
         this.id = id;
         this.date = date;
         this.products = products;
         this.total = 0;
         this.payment = null;
+        this.address = null;
         this.status = 0; // 0 for on-going, 1 for delivered
     }
 
+    // Display order's detail
     orderDetail() {
         return this;
     }
 
+    // Sum up total price
     calculateTotal() {
         let total = 0;
-        this.products.array.forEach(x => {total += x.price;});
+        this.products.forEach(x => total += x.product.price * x.qty);
         this.total = total;
         
         return this;
     }
 
+    // Add payment method
     assignPaymentMethod(method) {
         this.payment = method;
+        return this;
+    }
+
+    // Add deliver address
+    assignAddress(address) {
+        this.address = address;
         return this;
     }
 

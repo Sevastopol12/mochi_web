@@ -1,4 +1,4 @@
-import ProductModel from '../models/ProductModel.js';  
+import ProductController from "../controllers/ProductController.js";
 
 /**
  * Built on AJAX/webservice's convention. Loads the product-list element internally.
@@ -8,16 +8,17 @@ import ProductModel from '../models/ProductModel.js';
 const cart = {};  
 
 document.addEventListener('DOMContentLoaded', async () => {
-  const model = new ProductModel();
+  const controller = new ProductController();
 
   // Target product-list section
   const container = document.getElementById('product-list');
-  // Cart item
+
+  // Commit button
   const commitBtn  = document.getElementById('commit-btn');
 
   // Fetch products
   try {
-    const products = await model.listAll();
+    const products = await controller.listAll();
 
     // No products
     if (!products || products.length < 1) {
@@ -35,6 +36,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.error('Error loading products or template:', err);
     container.innerHTML = "<p>Error loading products.</p>";
   }
+
+  commitBtn.addEventListener('click', async () => {
+    commitOrder();
+  });
 
 })
 
@@ -68,6 +73,7 @@ function renderCard(product) {
 
 // Shopping cart 
 function updateCart(product, delta) {
+
   // 1) Update state
   const entry = cart[product.id] || { product, qty: 0 };
   entry.qty = Math.max(0, entry.qty + delta);
@@ -82,6 +88,7 @@ function updateCart(product, delta) {
   renderCart();
 }
 
+// Render cart item
 function renderCart() {
   const ul    = document.getElementById('cart-items');
   const total = document.getElementById('cart-total');
@@ -110,9 +117,10 @@ function renderCart() {
   total.textContent = `$${sum.toFixed(2)}`;
 }
 
+// POST 'api/order/': Commit order
 function commitOrder() {
   const items = Object.values(cart).map(e => ({
-    productId: e.product.id,
+    product: e.product,
     quantity:  e.qty
   }));
 
@@ -127,9 +135,11 @@ function commitOrder() {
     })
     .then(({ orderId }) => {
       alert(`Order #${orderId} committed!`);
+
       // Clear cart
       Object.keys(cart).forEach(k => delete cart[k]);
       renderCart();
+      
       // Reset all card badges
       document.querySelectorAll('.qty-value').forEach(s => s.textContent = '0');
     })
