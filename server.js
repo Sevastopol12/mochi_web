@@ -3,6 +3,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 import { renderProductPage, listAll } from './controllers/ProductController.js';
+import { handleCommitOrder } from './controllers/OrderController.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname  = path.dirname(__filename);
@@ -20,6 +21,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.get('/', async (req, res) => res.render('homepage', { title: 'Home page' }));
 app.get('/product', renderProductPage);
 app.get('/api/products', listAll);
+app.post('/api/order', handleCommitOrder)
 
 // Start server
 app.listen(3000, () =>
