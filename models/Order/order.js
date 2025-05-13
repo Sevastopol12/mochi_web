@@ -1,5 +1,5 @@
 export default class Order {
-    constructor(id, products, date) {
+    constructor(id, date, products) {
         this.id = id;
         this.date = date;
         this.products = products;
@@ -17,7 +17,7 @@ export default class Order {
     // Sum up total price
     calculateTotal() {
         let total = 0;
-        this.products.forEach(x => total += x.product.price * x.qty);
+        this.products.forEach(x => total += x.product.price * x.quantity);
         this.total = total;
         
         return this;
