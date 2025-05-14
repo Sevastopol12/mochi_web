@@ -25,7 +25,7 @@ export default class OrderManager extends BaseManager{
             await orders.insertOne(this.order);
 
             this.order = null; // Reset order variable
-            return "Order committed!"
+            return "Order committed!";
         }
         catch (err) {
             throw new Error('Cannot insert order into DB');

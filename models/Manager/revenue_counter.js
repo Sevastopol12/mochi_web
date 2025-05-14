@@ -4,7 +4,7 @@ import AppConfig from '../Config.js'
  * This class handles revenue-related info. Works directly with order collection. 
  */
 
-class ReveCounter {
+export default class ReveCounter {
     constructor() {
         this.config = new AppConfig();
         this.db_promise = this.config.initDB();
@@ -19,7 +19,7 @@ class ReveCounter {
 
         // Report status
         let total_revenue = 0;
-        orders.array.forEach(order => {total_revenue += order.total;});
+        Object.values(orders).forEach(order => {total_revenue += order.total;});
 
         return total_revenue;
     }
