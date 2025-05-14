@@ -1,4 +1,4 @@
-const productEl = document.getElementById('product-list');
+const container = document.getElementById('product-list');
 const revEl = document.getElementById('rev-value');
 const messageEl = document.getElementById('message');
 
@@ -18,6 +18,7 @@ addBtn.addEventListener('click', addProduct);
 updateBtn.addEventListener('click', updateProduct);
 removeBtn.addEventListener('click', removeProduct);
 
+// DOM responses
 document.addEventListener('DOMContentLoaded', refreshAll);
 
 // Helper to display messages
@@ -30,6 +31,7 @@ function showMessage(msg, type = 'danger') {
   }, 5000);
 }
 
+// POST: add product
 async function addProduct() {
   // Validation
   if (!nameInput.value.trim()) return showMessage('Name is required');
@@ -52,11 +54,13 @@ async function addProduct() {
     if (!res.ok) throw new Error(data.message || 'Add failed');
     showMessage(data.mess || 'Product added.', 'success');
     await refreshAll();
-  } catch (err) {
+  } 
+  catch (err) {
     showMessage(err.message);
   }
 }
 
+// POST: update product quantity
 async function updateProduct() {
   const id = idInput.value.trim();
   const quantity = parseInt(qtyInput.value, 10);
@@ -74,6 +78,7 @@ async function updateProduct() {
   } catch (e) { showMessage(e.message); }
 }
 
+// POST: delete product
 async function removeProduct() {
   const id = idInput.value.trim();
   if (!id) return showMessage('ID is required.');
@@ -101,19 +106,21 @@ function renderCard(product) {
   return clone;
 }
 
+// Load all products
 async function loadProducts() {
-  const res = await fetch('/api/products');
-  const products = await res.json();
-  productEl.innerHTML = '';
-  products.forEach(p => productEl.appendChild(renderCard(p)));
+  const products = await (await fetch('/api/products')).json();
+  container.innerHTML = '';
+  Object.value(products).forEach(product => container.appendChild(renderCard(product)));
 }
 
+// Load total revenue
 async function loadRevenue() {
   const res = await fetch('/api/revenue');
   let { total_revenue } = await res.json();
   revEl.textContent = `$${total_revenue.toFixed(2)}`;
 }
 
+// Refresh page
 async function refreshAll() {
   await Promise.all([loadProducts(), loadRevenue()]);
   idInput.value = nameInput.value = priceInput.value = qtyInput.value = '';
