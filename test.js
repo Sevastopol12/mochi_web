@@ -1,6 +1,10 @@
-let a = [{'name': 20, 'qty': 10}]
+import OrderManager from "./models/Manager/order_manager.js";
+import ProductManager from "./models/Manager/product_manager.js";
 
-let total = 0;
-a.forEach(x => total += x['name'] * x['qty'])
+const om = new OrderManager()
+const pm = new ProductManager();
 
-console.log(total)
+let a = await pm.listAll();
+Object.values(a).forEach(product => {
+    console.log(product.name)
+});
