@@ -3,8 +3,13 @@
 */
 
 // Built-in shopping cart
-let cart = {};  
-// Payment method defaults to cash
+let cart = {}; 
+ 
+// Commit alert
+const modal       = document.getElementById('orderModal');
+const closeIcon   = document.getElementById('orderModalClose');
+const okButton    = document.getElementById('orderModalOk');
+
 
 document.addEventListener('DOMContentLoaded', async () => {
   // Target product-list section
@@ -17,17 +22,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!products || products.length < 1) {
       container.innerHTML = "<p> No product to display. </p>";
     }
-
-    container.innerHTML = '';
-    products.forEach(product => {
-      const product_element = renderCard(product);
-      container.appendChild(product_element);
+    
+    Object.values(products).forEach(product => {
+      container.appendChild(renderCard(product));
     })
   }
 
   catch(err) {
     console.error('Error loading products or template:', err);
-    container.innerHTML = "<p>Error loading products.</p>";
+    container.innerHTML = err;
   }
 
   // Payment
@@ -180,7 +183,7 @@ async function commitOrder() {
     if (!res.ok) throw new Error(data['message']);
     return data;
   })
-  .then(({ }) => {
+  .then(() => {
     showOrderModal();
 
     Object.keys(cart).forEach(k => delete cart[k]);
@@ -192,11 +195,6 @@ async function commitOrder() {
     alert(err.message);
   });
 }
-
-// Commit alert
-const modal       = document.getElementById('orderModal');
-const closeIcon   = document.getElementById('orderModalClose');
-const okButton    = document.getElementById('orderModalOk');
 
 function showOrderModal() {
   modal.style.display = 'flex';
