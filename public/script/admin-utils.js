@@ -1,140 +1,120 @@
 const productEl = document.getElementById('product-list');
-const revEl    = document.getElementById('rev-value');
+const revEl = document.getElementById('rev-value');
+const messageEl = document.getElementById('message');
 
 // Form fields
-let idInput    = document.getElementById('prod-id');
-let nameInput  = document.getElementById('prod-name');
-let priceInput = document.getElementById('prod-price');
-let qtyInput   = document.getElementById('prod-qty');
+const idInput = document.getElementById('prod-id');
+const nameInput = document.getElementById('prod-name');
+const priceInput = document.getElementById('prod-price');
+const qtyInput = document.getElementById('prod-qty');
 
-// Utils
+// Buttons
 const addBtn = document.getElementById('btn-add');
 const updateBtn = document.getElementById('btn-update');
 const removeBtn = document.getElementById('btn-delete');
+
+// Event listeners
 addBtn.addEventListener('click', addProduct);
 updateBtn.addEventListener('click', updateProduct);
 removeBtn.addEventListener('click', removeProduct);
 
-document.addEventListener('DOMContentLoaded', async () => {
-    // Loads product list
-    await loadProducts();
-})
+document.addEventListener('DOMContentLoaded', refreshAll);
 
-// Add product 
+// Helper to display messages
+function showMessage(msg, type = 'danger') {
+  messageEl.textContent = msg;
+  messageEl.className = `alert alert-${type} mt-2`;
+  setTimeout(() => {
+    messageEl.textContent = '';
+    messageEl.className = '';
+  }, 5000);
+}
+
 async function addProduct() {
-    let validation = await isAddValid();
-    if (validation) {
-        document.getElementById("message").textContent = validation; 
-        return;
-    }
+  // Validation
+  if (!nameInput.value.trim()) return showMessage('Name is required');
+  if (!priceInput.value.trim()) return showMessage('Price is required');
 
-    let productMeta =  {
-        product_id: String(idInput.value.trim()),
-        name:       String(nameInput.value.trim()),
-        price:      parseFloat(priceInput.value),
-        quantity:   parseInt(qtyInput.value, 10)
-    };
+  const productMeta = {
+    product_id: idInput.value.trim(),
+    name: nameInput.value.trim(),
+    price: parseFloat(priceInput.value),
+    quantity: parseInt(qtyInput.value, 10) || 0
+  };
 
-    fetch('/api/add', {
+  try {
+    const res = await fetch('/api/products/add', {
       method: 'POST',
-      headers: { 'Content-Type':'application/json' },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ productMeta })
-    })
-    .then(async res => {
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.message || 'Unknown error');
-      }
-      return data;
-    })
-    .then(data => {
-      refreshAll();       // only refresh on success
-    })
-    .catch(err => {
-      alert("a");
     });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Add failed');
+    showMessage(data.mess || 'Product added.', 'success');
+    await refreshAll();
+  } catch (err) {
+    showMessage(err.message);
+  }
 }
 
-async function isAddValid() {
-    // Validate name
-    if (nameInput.value.trim().length < 1) {
-        return "A new product should have a name.";
-    }
-    // Validate price
-    if (priceInput.value.trim().length < 1) {
-        return "Please add price for the new product.";
-    }
-
-    return 0;
-}
-
-// Update product 
 async function updateProduct() {
-
-    document.getElementById('btn-update').onclick = () => {
-        fetch(`/api/products/${encodeURIComponent(idInput.value)}`, {
-        method: 'PUT',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({ quantity: parseInt(qtyInput.value, 10) })
-        }).then(refreshAll);
-    };
+  const id = idInput.value.trim();
+  const quantity = parseInt(qtyInput.value, 10);
+  if (!id || isNaN(quantity)) {
+    return showMessage('Valid ID and quantity are required.');
+  }
+  try {
+    const res = await fetch(`/api/products/${encodeURIComponent(id)}`, {
+      method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ quantity }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message);
+    showMessage(data.message, 'success');
+    await refreshAll();
+  } catch (e) { showMessage(e.message); }
 }
 
 async function removeProduct() {
-    document.getElementById('btn-delete').onclick = () => {
-        fetch(`/api/products/${encodeURIComponent(idInput.value)}`, {
-        method: 'DELETE'
-        }).then(refreshAll);
-    };
+  const id = idInput.value.trim();
+  if (!id) return showMessage('ID is required.');
+  try {
+    const res = await fetch(`/api/products/${encodeURIComponent(id)}`, { method: 'DELETE' });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message);
+    showMessage(data.message, 'success');
+    await refreshAll();
+  } catch (e) { showMessage(e.message); }
 }
 
-// Render item's html content
+
+// Render and load
 function renderCard(product) {
-  // Get the product-card template, which defined in the product page
   const template = document.getElementById('product-template').content;
   const clone = document.importNode(template, true);
-
-  // product card
   const card = clone.querySelector('.product-card');
   card.id = `product-${product.id}`;
-  card.dataset.id = product.id;
-
-  clone.querySelector('.product-image')
-      .src = product.imageUrl || '/img/mochi.jpeg';
+  clone.querySelector('.product-image').src = product.imageUrl || '/img/mochi.jpeg';
   clone.querySelector('.product-id').textContent = `ID: ${product.id}`;
-  clone.querySelector('.product-name').textContent = `${product.name}`;
-  clone.querySelector('.product-price').textContent = `$ ${product.price.toFixed(2)}`;
+  clone.querySelector('.product-name').textContent = product.name;
+  clone.querySelector('.product-price').textContent = `$${product.price.toFixed(2)}`;
   clone.querySelector('.qty-value').textContent = `In stock: ${product.quantity}`;
-
   return clone;
 }
 
-// fetch & render products
 async function loadProducts() {
-    const res = await fetch('/api/products');
-    const products = await res.json();
-    productEl.innerHTML = '';
-    products.forEach(p => {
-    productEl.appendChild(renderCard(p));
-    });
+  const res = await fetch('/api/products');
+  const products = await res.json();
+  productEl.innerHTML = '';
+  products.forEach(p => productEl.appendChild(renderCard(p)));
 }
 
-// fetch & render revenue
 async function loadRevenue() {
-    const res = await fetch('/api/revenue');
-    const { total_revenue } = await res.json();
-    revEl.textContent = `$${total_revenue.toFixed(2)}`;
+  const res = await fetch('/api/revenue');
+  let { total_revenue } = await res.json();
+  revEl.textContent = `$${total_revenue.toFixed(2)}`;
 }
 
-// refresh both
 async function refreshAll() {
-    await Promise.all([loadProducts(), loadRevenue()]);
-    // clear inputs
-    nameInput.value = priceInput.value = qtyInput.value = '';
+  await Promise.all([loadProducts(), loadRevenue()]);
+  idInput.value = nameInput.value = priceInput.value = qtyInput.value = '';
 }
-
-
-
-// initial load
-refreshAll();
-

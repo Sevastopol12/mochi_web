@@ -1,37 +1,64 @@
-import ProductManager from "../models/Manager/product_manager.js";
-import ReveCounter from "../models/Manager/revenue_counter.js";
 
+import ProductManager from '../models/Manager/product_manager.js';
+import ReveCounter from '../models/Manager/revenue_counter.js';
 
-const pm = new ProductManager()
+const pm = new ProductManager();
 const rc = new ReveCounter();
-// Add new product
-export async function addProduct(req, res, next) {
-    try {
-        let { productMeta } =  req.body;
-        let { product_id, name, price, quantity } = productMeta;
 
-        if (await pm.ExistanceValidation(product_id, name)) {throw new Error("Product already existed! Please choose a different name or try Add-quantity.")};
-        // Add to db
-        const mess = await pm.add(product_id, name, price, quantity);
-        return res.status(200).json({ mess });
-    }
-    catch(err) {
-        return res.status(500).json({message: err.message});
-    }
-} 
+export async function addProduct(req, res) {
+  try {
+    const { productMeta } = req.body;
+    
+    // Validate whether the id & name is valid
+    const exists = await pm.ExistenceValidation(productMeta.product_id, productMeta.name);
+    if (exists) return res.status(400).json({ message: 'Product already exists.' });
 
-export async function remove(req, res, next) {
-    try {
-        let { productMeta } =  req.body;
-        let { product_id, name, price, quantity } = productMeta;
-        await pm.remove(product_id);
-    }
-    catch (err) {
-
-    }
+    // Add product
+    const mess = await pm.add(productMeta.product_id, productMeta.name, productMeta.price, productMeta.quantity);
+    return res.status(200).json({ message: mess });
+  } 
+  catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
 }
 
-export async function displayRevenue(req, res, next) {
-    let mess = {'name': '1', 'total_revenue': 100};
-    return res.json(mess);
+export async function updateProduct(req, res) {
+  try {
+    const { id } = req.params;
+    const { quantity } = req.body;
+    if (quantity == null || isNaN(quantity)) {
+      return res.status(400).json({ message: 'Valid quantity is required.' });
+    }
+    const product = await pm.findById(id);
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found.' });
+    }
+    await pm.updateQuantity(product, parseInt(quantity, 10));
+    res.json({ message: 'Quantity updated successfully.' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+}
+
+export async function removeProduct(req, res) {
+  try {
+    const { id } = req.params;
+    const product = await pm.findById(id);
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found.' });
+    }
+    await pm.remove(id);
+    res.json({ message: 'Product removed successfully.' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+}
+
+export async function displayRevenue(req, res) {
+  try {
+    const { total_revenue } = await rc.getTotal();
+    res.json({ total_revenue });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 }

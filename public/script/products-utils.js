@@ -64,8 +64,7 @@ function renderCard(product) {
   card.id = `product-${product.id}`;
   card.dataset.id = product.id;
 
-  clone.querySelector('.product-image')
-      .src = product.imageUrl || '/img/mochi.jpeg';
+  clone.querySelector('.product-image').src = product.imageUrl || '/img/mochi.jpeg';
   clone.querySelector('.product-name').textContent = product.name;
   clone.querySelector('.product-price').textContent = `$ ${product.price.toFixed(2)}`;
   clone.querySelector('.qty-value').textContent = 0;

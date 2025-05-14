@@ -6,5 +6,5 @@ const pm = new ProductManager();
 
 let a = await pm.listAll();
 Object.values(a).forEach(product => {
-    console.log(product.name)
+    console.log(product)
 });
