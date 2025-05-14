@@ -1,107 +1,151 @@
-/* → Paste below your existing CSS ← */
-
-/* Pastel background */
+/* ==========================
+   Global Reset & Typography
+   ========================== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 body {
   background: #fff0f6;
   font-family: 'Comic Neue', cursive, Arial, sans-serif;
+  line-height: 1.5;
 }
 
-/* Section Title */
+/* ==========================
+   Section Titles
+   ========================== */
 .section-title {
-  font-size: 2rem;
-  color: #5a2a83;
-  margin-bottom: 1rem;
-  text-shadow: 1px 1px 2px rgba(90,42,131,0.3);
+  font-size: 1.8rem;
+  color: var(--deep-pink);
+  font-weight: bold;
+  font-family: 'Comic Neue', cursive;
+  text-shadow: 1px 1px 2px rgba(255, 105, 135, 0.3);
 }
 
-/* Product Cards : soften corners */
+/* ==========================
+   Product Card 
+   ========================== */
+   
 .product-card {
   border-radius: 16px;
   overflow: hidden;
   transition: transform 0.2s ease;
+  background: #fff;
 }
 .product-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
-/* Cute input fields */
+.horizontal-scroll-wrapper {
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  padding-bottom: 10px;
+}
+
+.product-pages {
+  display: flex;
+  gap: 16px;
+}
+
+.product-page {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 columns per page */
+  grid-template-rows: repeat(2, auto);   /* 2 rows per page */
+  gap: 16px;
+  min-width: 100%; /* Makes each page the width of the container */
+  box-sizing: border-box;
+  padding-right: 10px;
+}
+
+
+/* ==========================
+   Form Inputs 
+   ========================== */
 .cute-input {
   border-radius: 12px;
   border: 2px solid #ffd6e0;
   background-color: #fffafa;
+  padding: 0.5rem;
 }
 .cute-input:focus {
   border-color: #ff85c0;
   box-shadow: 0 0 0 0.2rem rgba(255,133,192,0.25);
+  outline: none;
 }
 
-/* Cart Sidebar Card */
-.cart-card {
+/* ==========================
+   Cart Sidebar
+   ========================== */
+.cart-sidebar .cart-card {
   background: #ffffff;
   border-radius: 16px;
   box-shadow: 0 4px 16px rgba(0,0,0,0.05);
   border: none;
+  padding: 1rem;
 }
-
-/* Cart Header */
-.cart-header h4 {
+.cart-sidebar .cart-header h4 {
   margin: 0.5rem 0;
   color: #e84393;
 }
-
-/* Empty Text */
-.empty-text {
+.cart-sidebar .empty-text {
   font-style: italic;
   color: #999;
 }
-
-/* Cart Items */
-.cart-items li {
+.cart-sidebar .cart-items li {
   padding: 8px 0;
   border-bottom: 1px dashed #ffb3c1;
 }
-.cart-items li:last-child {
+.cart-sidebar .cart-items li:last-child {
   border-bottom: none;
 }
-
-/* Payment Toggle Buttons */
-.payment-toggle .pay-btn {
+.cart-sidebar .payment-toggle {
+  display: flex;
+  margin-top: 1rem;
+}
+.cart-sidebar .payment-toggle .pay-btn {
   flex: 1;
   border-radius: 0;
   padding: 0.6rem;
   font-size: 0.9rem;
   transition: background-color 0.2s;
   border: 1px solid #ff85c0;
+  background: #fff;
 }
-.payment-toggle .pay-btn:first-child {
+.cart-sidebar .payment-toggle .pay-btn:first-child {
   border-top-left-radius: 8px;
   border-bottom-left-radius: 8px;
 }
-.payment-toggle .pay-btn:last-child {
+.cart-sidebar .payment-toggle .pay-btn:last-child {
   border-top-right-radius: 8px;
   border-bottom-right-radius: 8px;
 }
-.payment-toggle .pay-btn.active {
+.cart-sidebar .payment-toggle .pay-btn.active {
   background-color: #ff6b81;
   color: #fff;
 }
-.payment-toggle .pay-btn:not(.active):hover {
+.cart-sidebar .payment-toggle .pay-btn:not(.active):hover {
   background-color: #ffe3e3;
 }
 
-/* Total Row */
-.total-row .total-label {
+.cart-sidebar .total-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+.cart-sidebar .total-row .total-label {
   font-weight: bold;
   color: #6c5ce7;
 }
-.total-row .total-value {
+.cart-sidebar .total-row .total-value {
   font-size: 1.3rem;
   color: #d63031;
 }
-
-/* Place Order Button */
-.place-order {
+.cart-sidebar .place-order {
+  width: 100%;
+  margin-top: 1rem;
   background-color: #ff7675;
   border: none;
   border-radius: 12px;
@@ -109,20 +153,22 @@ body {
   font-size: 1rem;
   color: #fff;
   transition: background-color 0.2s, transform 0.1s;
+  cursor: pointer;
 }
-.place-order:disabled {
+.cart-sidebar .place-order:disabled {
   background-color: #ffe3e3;
   cursor: not-allowed;
   color: #aaa;
 }
-.place-order:not(:disabled):hover {
+.cart-sidebar .place-order:not(:disabled):hover {
   background-color: #e84393;
   transform: translateY(-2px);
 }
 
-
-/* Alert form */
-.modal {
+/* ==========================
+   Modal Dialog
+   ========================== */
+#orderModal .modal {
   position: fixed;
   top: 0; left: 0;
   width: 100%; height: 100%;
@@ -132,9 +178,7 @@ body {
   justify-content: center;
   z-index: 1000;
 }
-
-/* the white “card” in the middle */
-.modal-content {
+#orderModal .modal-content {
   background: #fff;
   padding: 1.5rem;
   border-radius: 8px;
@@ -143,18 +187,14 @@ body {
   text-align: center;
   position: relative;
 }
-
-/* the “×” close icon */
-.modal-close {
+#orderModal .modal-close {
   position: absolute;
   top: 0.5rem;
   right: 0.75rem;
   font-size: 1.5rem;
   cursor: pointer;
 }
-
-/* basic button styling */
-#orderModalOk {
+#orderModal #orderModalOk {
   margin-top: 1rem;
   padding: 0.5rem 1rem;
   border: none;
@@ -163,6 +203,6 @@ body {
   border-radius: 4px;
   cursor: pointer;
 }
-#orderModalOk:hover {
+#orderModal #orderModalOk:hover {
   opacity: 0.9;
 }
