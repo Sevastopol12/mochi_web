@@ -29,15 +29,17 @@ body {
 }
 
 /* ==========================
-   Product Card 
+   Product 
    ========================== */
    
+
 .product-card {
   border-radius: 16px;
   overflow: hidden;
   transition: transform 0.2s ease;
   background: #fff;
 }
+
 .product-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
@@ -48,6 +50,11 @@ body {
   overflow-y: hidden;
   white-space: nowrap;
   padding-bottom: 10px;
+  gap: 1rem;                     
+  border: 3px dashed #ff99cc;   
+  border-radius: 16px;           
+  box-shadow: 0 4px 10px rgba(255, 153, 204, 0.4); 
+  background: #fff0f5;       
 }
 
 .product-pages {
