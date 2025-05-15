@@ -10,35 +10,57 @@
     href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
     rel="stylesheet"
   />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&display=swap">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap">
   <link rel="stylesheet" href="/css/styles.css" />
 </head>
 <body class="d-flex flex-column min-vh-100">
 
   <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container">
-      <a class="navbar-brand" href="/">
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light py-3">
+      <div class="container-fluid">
         <img src="/img/logo.png" alt="Logo" height="40" class="d-inline-block align-text-top">
-        Mochi Shop
-      </a>
-      <button class="navbar-toggler" type="button" 
-              data-bs-toggle="collapse" data-bs-target="#navMenu">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navMenu">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link" href="/">Trang chủ</a></li>
-          <li class="nav-item"><a class="nav-link active" href="/product">Sản phẩm</a></li>
-          <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-cart"></i>Cục mochi dễ hưn >.<</a></li>
-          <button class="btn btn-outline-light me-2">Khuyến mãi</button>
-          <button id="yt" class="btn btn-danger">▶</button>
-          <button class="btn btn-outline-light ms-2">🛒</button>
-        </ul>
+        <a class="navbar-brand" href="/">Mochi Shop</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navMenu"
+          aria-controls="navMenu"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Your cute nav snippet -->
+        <div class="collapse navbar-collapse" id="navMenu">
+          <ul class="navbar-nav ms-auto align-items-center cute-nav">
+            <li class="nav-item"><a class="nav-link" href="/">Trang chủ</a></li>
+            <li class="nav-item"><a class="nav-link" href="/product">Sản phẩm</a></li>
+            <li class="nav-item">
+              <a class="nav-link" href="#"><i class="bi bi-cart-fill me-1"></i>Cục mochi dễ hưn >.<</a>
+            </li>
+            <li class="nav-item"><button class="btn cute-btn me-2">🎁 Khuyến mãi</button></li>
+            <li class="nav-item"><button id="yt" class="btn cute-btn danger me-2">▶ YouTube</button></li>
+            <li class="nav-item"><button class="btn cute-btn">🛒 Giỏ hàng</button></li>
+
+            <% if (session && session.user) { %>
+              <li class="nav-item user-welcome">
+                <span>Hi, <%= session.user.name %>! 😊</span>
+                <button onclick="location.href='/api/logout'"
+                        class="btn cute-btn logout ms-2">🚪 Logout</button>
+              </li>
+            <% } else { %>
+              <li class="nav-item">
+                <button id="openAuth" class="btn cute-btn ms-2">🔒 Đăng Nhập</button>
+              </li>
+            <% } %>
+          </ul>
+        </div>
       </div>
-    </div>
-  </nav>
+    </nav>
+  </header>
 
   <!-- Main Content -->
   <main class="container py-5 flex-grow-1">
@@ -132,6 +154,9 @@
   <!-- Loads products -->
   <script type="module" src="/script/products-utils.js"></script>
 
+  <!-- Authorization method -->
+  <script type="module" src="/script/auth-utils.js"></script> 
+  
   <script>
     let button = document.getElementById('yt');
     button.addEventListener('click', () => {

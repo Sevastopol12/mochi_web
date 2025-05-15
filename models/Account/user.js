@@ -1,10 +1,9 @@
 import BaseAccount from "./base.js";
 
 class User extends BaseAccount {
-    constructor(username, password, email, phone_number) {
-        super(username, password, email, phone_number);
+    constructor(id, name, password, email, phone_number) {
+        super(id, name, password, email, phone_number);
         this.role = 'user';
-        this.cart = [];
         this.orders = [];
     }
 

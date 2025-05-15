@@ -1,10 +1,8 @@
-import OrderManager from "./models/Manager/order_manager.js";
-import ProductManager from "./models/Manager/product_manager.js";
+import AccountManager from "./models/Manager/account_manager.js";
 
-const om = new OrderManager()
-const pm = new ProductManager();
+const am = new AccountManager();
 
-let a = await pm.listAll();
-Object.values(a).forEach(product => {
-    console.log(product)
-});
+
+let a = await am.listAll();
+
+Object.values(a).forEach(x => console.log(x));
