@@ -91,7 +91,6 @@ async function removeProduct() {
   } catch (e) { showMessage(e.message); }
 }
 
-
 // Render and load
 function renderCard(product) {
   const template = document.getElementById('product-template').content;
@@ -106,22 +105,27 @@ function renderCard(product) {
   return clone;
 }
 
-// Load all products
+// Load products
 async function loadProducts() {
-  const products = await (await fetch('/api/products')).json();
-  container.innerHTML = '';
-  Object.value(products).forEach(product => container.appendChild(renderCard(product)));
+  try {
+    const products = await (await fetch('/api/products')).json();
+    // No products
+    if (!products || products.length < 1) { container.innerHTML = "<p> No product to display. </p>"; }
+    container.innerHTML = '';
+    Object.values(products).forEach(product => {container.appendChild(renderCard(product));})
+  }
+  catch(err) { console.error('Error loading products or template:', err); container.innerHTML = err;}
 }
 
 // Load total revenue
 async function loadRevenue() {
   const res = await fetch('/api/revenue');
   let { total_revenue } = await res.json();
-  revEl.textContent = `$${total_revenue.toFixed(2)}`;
+  revEl.textContent = `$${total_revenue}`;
 }
 
 // Refresh page
 async function refreshAll() {
-  await Promise.all([loadProducts(), loadRevenue()]);
+  await Promise.all([loadProducts()]);
   idInput.value = nameInput.value = priceInput.value = qtyInput.value = '';
 }
