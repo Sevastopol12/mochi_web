@@ -40,9 +40,9 @@ app.get('/register', (req, res) => res.render('register'));
 app.get('/product', renderProductPage);
 
 // Auth
-app.post('/api/login',    login);
+app.post('/api/login', login);
 app.post('/api/register', register);
-app.get('/api/logout',    logout);
+app.get('/api/logout', logout);
 
 // Admin page
 app.get('/admin', checkRole, (req, res) => res.render('admin'));
