@@ -61,7 +61,6 @@ app.get('/api/revenue', checkAuth, checkRole, displayRevenue);
 app.post('/api/order', handleCommitOrder);
 
 
-
 // Catch-all JSON error handler for /api
 app.use('/api', (err, req, res, next) => {
   console.error(err);
