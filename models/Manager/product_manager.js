@@ -1,92 +1,61 @@
-import BaseManager from './base_manager.js';
-import Product from "../Product/product.js";
-import AppConfig from "../Config.js";
 
-class ProductManager extends BaseManager{
-  /**
-   * A class that works with the product database, have all access and permission to manipulate the product database
-  */
+import BaseManager from './base_manager.js';
+import Product from '../Product/product.js';
+
+export default class ProductManager extends BaseManager {
   constructor() {
     super();
     this.collection = 'products';
   }
 
   // Add a product
-  async add({product_id, name, price, quantity}) {
-    let db = await this.dbPromise;
-    let products = db.collection(this.collection);
+  async add(product_id, name, price, quantity) {
+    const db = await this.dbPromise;
+    const products = db.collection(this.collection);
 
-    // Create a new product and add it into the database
-    try {
-      let new_product = new Product({id: product_id, name: name, price: price, quantity: quantity});
-      await products.insertOne(new_product);
-      return this;
-    }
-
-    catch (error) {
-      console.error('Error adding account to database:', error);
-      throw error;
-    }
+    let newId = String(product_id).trim() || String((await this.listAll()).length +1);
+  
+    const new_product = new Product({ id: newId, name, price, quantity });
+    await products.insertOne(new_product);
+    return 'Successfully added.';
   }
 
-  // Remove a product 
-  async remove({product_id}) {
-    let db = await this.dbPromise;
-    let products = db.collection(this.collection);
-    
-    // Validate product existence
-    let product = products.findOne({id: product_id});
-
-    // Return the product if it existed
-    if (product !== null) {
-      await products.deleteOne({id: product_id})
-    }
-    else {return this;} // return self else
+  // Remove a product
+  async remove(product_id) {
+    const db = await this.dbPromise;
+    const products = db.collection(this.collection);
+    await products.deleteOne({ id: product_id });
   }
 
-  // Update product quantity 
+  // Update product quantity
   async updateQuantity(product, add_quantity) {
-    let db = await this.dbPromise;
-    let products = db.collection('products');
-    let new_quantity = product.quantity + add_quantity
-
-    await products.updateOne(
-      {id: product.id},
-      {$set: {quantity, new_quantity}}
-    );
-
-      return this;
+    const db = await this.dbPromise;
+    const products = db.collection(this.collection);
+    const newQuantity = product.quantity + add_quantity;
+    await products.updateOne({ id: product.id }, { $set: { quantity: newQuantity } });
   }
 
-  // Return all product in the database
+  // List all existing products
   async listAll() {
-    let db = await this.dbPromise;
-    let products = db.collection(this.collection);
-
-    // Get all existing product
-    let all_products = products.find({});
-
-    if (all_products !== null){
-      all_products = all_products.toArray();
-      return all_products;
-    }
-
-    else {return null;}
-
+    const db = await this.dbPromise;
+    const products = db.collection(this.collection);
+    return products.find({}).toArray() || [];
   }
-
+  
   // Find a product using its id
   async findById(product_id) {
-    let db = await this.dbPromise;
-    let products = db.collection('products');
+    const db = await this.dbPromise;
+    return await db.collection(this.collection).findOne({ id: product_id });
+  }
 
-    // Validate product existence
-    let product_exist = products.findOne({id: product_id});
+  // Find a product using its name
+  async findByName(product_name) {
+    const db = await this.dbPromise;
+    return await db.collection(this.collection).findOne({ name: product_name });
+  }
 
-    if (product_exist !== nul) {return product_exist;} // return the product if it existed
-    else {return null;} // return null else
-
+  // Existence of a product
+  async ExistenceValidation(product_id, product_name) {
+    return (await this.findById(product_id) || await this.findByName(product_name)) ? true : false;
   }
 }
-
-export default ProductManager;

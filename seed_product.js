@@ -1,4 +1,4 @@
-import ProductManager from './app/Manager/product_manager.js';
+import ProductManager from "./models/Manager/product_manager.js";
 const manager = new ProductManager();
 
 const sampleProducts = [
@@ -27,13 +27,8 @@ const sampleProducts = [
 async function seed() {
   for (let i = 0; i < sampleProducts.length; i++) {
     const product = sampleProducts[i];
-    await manager.add({
-      product_id: product.id,
-      name: product.name,
-      price: product.price,
-      quantity: product.quantity,
-    });
-    console.log(`Inserted: ${product.name}`);
+    await manager.add(product.id,product.name,product.price,product.quantity);
+    console.log(`Inserted: ${(await manager.findById(product.id)).name}`);
   }
   console.log('✅ All products inserted.');
 }
