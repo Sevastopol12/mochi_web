@@ -5,25 +5,45 @@ export default class OrderManager extends BaseManager{
     constructor(){
         super();
         this.collection = 'orders'
-        this.order;
+        this.order = null;
     }
 
     // Create a temporary order object. This object lives on the client side
     create(products) {
-        this.order = new Order(id=this.generateID(), date=this.getDate(), products=this.products)
-        order.calculateTotal();
+        this.order = new Order(this.generateID(), this.getDate(), products);
+        this.order.calculateTotal();
     }
 
     // Store order into database    
     async add() {
-        if (this.order === null  || this.order.products.length < 1) {throw new Error('You havent add any item yet');}
+        try {
+            if (this.order === null  || this.order.products.length < 1) {throw new Error('You havent add any item yet');}
+            let db = await this.dbPromise;
+            let orders = db.collection(this.collection);
+            
+            // Insert 
+            await orders.insertOne(this.order);
+
+            this.order = null; // Reset order variable
+            return "Order committed!"
+        }
+        catch (err) {
+            throw new Error('Cannot insert order into DB');
+        }
+    }
+
+    // List all existing orders
+    async listAll() {
         let db = await this.dbPromise;
         let orders = db.collection(this.collection);
+
+        let all_orders = orders.find({});
         
-        // Insert 
-        await orders.insertOne(this.orders);
-        this.order = null; // Reset order variable
-        return;
+        if (all_orders != null) {
+            return all_orders.toArray();
+        }
+
+        else {return null;}
     }
 
     // Cancel order
@@ -39,14 +59,15 @@ export default class OrderManager extends BaseManager{
     }
 
     // Assign delivery address
-    addLoc(address) {
+    assignAddress(address) {
         this.order.assignAddress(address);
         return;
     }
     
     // Generate random id
     generateID() {
-        return Array.from({'length': 5}, () => Math.floor(Math.random()*10)).join('');
+        let rnd_id = Array.from({'length': 5}, () => Math.floor(Math.random()*10)).join('');
+        return rnd_id;
     }
 
     // Get today's date

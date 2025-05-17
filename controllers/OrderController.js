@@ -1,16 +1,21 @@
-import OrderManager from "../models/Manager/order_manager";
+import OrderManager from "../models/Manager/order_manager.js";
 
 const om = new OrderManager()
 
-export async function commitOrder(req, res, next) {
+export async function handleCommitOrder(req, res, next) {
     try {
-        let product_list = req.body;
-        
+        let { orderMeta } = req.body;
+        let { products, address, payment } = orderMeta;
+        // Create order
+        om.create(products);
+        om.assignAddress(address);
+        om.addPayment(payment);
 
-        let my_order = om.create(product_list);
-
+        // Commit to DB
+        const mess = await om.add();
+        return res.status(200).json({ mess });
     } 
     catch (err) {
-        next(err);
+        return res.status(500).json({ message: err.message });
     }
 }

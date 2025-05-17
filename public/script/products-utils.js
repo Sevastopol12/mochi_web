@@ -3,16 +3,12 @@
 */
 
 // Built-in shopping cart
-const cart = {};  
-const address = "";
+let cart = {};  
+// Payment method defaults to cash
 
 document.addEventListener('DOMContentLoaded', async () => {
   // Target product-list section
   const container = document.getElementById('product-list');
-
-  // Commit button
-  const commitBtn  = document.getElementById('commit-btn');
-
   // Fetch products
   try {
     const products = await (await fetch('/api/products')).json();
@@ -34,6 +30,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     container.innerHTML = "<p>Error loading products.</p>";
   }
 
+  // Payment
+  const cashBtn = document.getElementById('pay-cash-btn');
+  const cardBtn = document.getElementById('pay-card-btn');
+
+  [cashBtn, cardBtn].forEach(btn => {
+    btn.addEventListener('click', () => {
+      cashBtn.classList.remove('active');
+      cardBtn.classList.remove('active');
+      btn.classList.add('active');
+    });
+  });
+
+  // Commit button
+  const commitBtn  = document.getElementById('commit-btn');
   commitBtn.addEventListener('click', async () => {
     commitOrder();
   });
@@ -71,30 +81,47 @@ function renderCard(product) {
 // Shopping cart 
 function updateCart(product, delta) {
 
-  // 1) Update state
+  // Update state
   const entry = cart[product.id] || { product, qty: 0 };
   entry.qty = Math.max(0, entry.qty + delta);
   if (entry.qty === 0) delete cart[product.id];
   else cart[product.id] = entry;
 
-  // 2) Update card badge
+  // Update card badge
   const card = document.querySelector(`.product-card[data-id="${product.id}"]`);
   if (card) card.querySelector('.qty-value').textContent = entry.qty || 0;
 
-  // 3) Re-render cart sidebar
+  // Re-render cart sidebar
   renderCart();
 }
 
 // Render cart item
 function renderCart() {
-  const ul    = document.getElementById('cart-items');
+  // Reset error message
+  document.getElementById('message').textContent = '';
+  let cartEmptyParagraph = document.getElementById('cart-empty');
+
+  // Start rendering
+  const ul = document.getElementById('cart-items');
   const total = document.getElementById('cart-total');
   ul.innerHTML = '';
   let sum = 0;
 
+
+  if (Object.keys(cart).length > 0) {
+      cartEmptyParagraph.setAttribute('hidden', 'true');
+  }
+
+  else {
+      ul.innerHTML = '';
+      cartEmptyParagraph.setAttribute('hidden', 'false'); 
+      return;
+  }
+
   Object.values(cart).forEach(({ product, qty }) => {
     const li = document.createElement('li');
     li.className = 'd-flex justify-content-between align-items-center mb-2';
+
     li.innerHTML = `
       <span>${product.name} × ${qty}</span>
       <div>
@@ -115,34 +142,74 @@ function renderCart() {
 }
 
 // POST 'api/order/': Commit order
-function commitOrder() {
-  let items = Object.values(cart).map(e => ({
+async function commitOrder() {
+  // Validate address
+  let address = document.getElementById('shipping-address').value.trim();
+  if (!address || address.length < 1) {
+    document.getElementById('message').textContent = 'Please enter an address.';
+    return;
+  }
+
+  // Validate payment method
+  let payment = document.querySelector('.btn-group .btn.active').dataset.value.trim();
+  if (!payment || payment.trim().length < 1) {
+    document.getElementById('message').textContent = 'Please select a payment method.';
+    return;
+  }
+
+  // Validate product
+  if (Object.keys(cart).length < 1) {
+    document.getElementById('message').textContent = 'Please select an item.';
+    return;
+  }
+
+  let products = Object.values(cart).map(e => ({
     product: e.product,
     quantity:  e.qty
   }));
 
+  let orderMeta = {products, address, payment};
 
   fetch('/api/order', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ items })
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ orderMeta })
   })
-  .then(res => {
-    if (!res.ok) throw new Error('Order failed');
-    return res.json();
+  .then(async res => {
+    const data = await res.json();
+    if (!res.ok) throw new Error(data['message']);
+    return data;
   })
-  .then(({ orderId }) => {
-    alert(`Order #${orderId} committed!`);
+  .then(({ }) => {
+    showOrderModal();
 
-    // Clear cart
     Object.keys(cart).forEach(k => delete cart[k]);
     renderCart();
-    
-    // Reset all card badges
-    document.querySelectorAll('.qty-value').forEach(s => s.textContent = '0');
+    document.querySelectorAll('.qty-value').forEach(s => (s.textContent = '0'));
   })
   .catch(err => {
-    console.error(err);
-    alert('Failed to commit order.');
+    console.error('Order failed:', err);
+    alert(err.message);
   });
 }
+
+// Commit alert
+const modal       = document.getElementById('orderModal');
+const closeIcon   = document.getElementById('orderModalClose');
+const okButton    = document.getElementById('orderModalOk');
+
+function showOrderModal() {
+  modal.style.display = 'flex';
+}
+function hideOrderModal() {
+  modal.style.display = 'none';
+}
+
+// close on “×” or “OK”
+closeIcon.addEventListener('click', hideOrderModal);
+okButton.addEventListener('click', hideOrderModal);
+
+// also close if user clicks outside the content
+modal.addEventListener('click', e => {
+  if (e.target === modal) hideOrderModal();
+});
