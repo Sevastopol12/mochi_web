@@ -1,4 +1,4 @@
-import AppConfig from "../Config.js"
+import AppConfig from "../../config/dbConfig.js"
 
 export default class BaseManager {
     /**

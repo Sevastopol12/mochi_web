@@ -3,11 +3,12 @@
  */
 
 class Product {
-  constructor({ id, name, price, quantity }) {
+  constructor({ id, name, price, quantity, description }) {
     this.id = id;
     this.name = name;
     this.price = price;
     this.quantity = quantity;
+    this.description = description
   }
 
   getInfo() {

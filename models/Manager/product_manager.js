@@ -9,13 +9,13 @@ export default class ProductManager extends BaseManager {
   }
 
   // Add a product
-  async add(product_id, name, price, quantity) {
+  async add(product_id, name, price, quantity, description) {
     const db = await this.dbPromise;
     const products = db.collection(this.collection);
 
     let newId = String(product_id).trim() || String((await this.listAll()).length +1);
   
-    const new_product = new Product({ id: newId, name, price, quantity });
+    const new_product = new Product({ id: newId, name, price, quantity, description });
     await products.insertOne(new_product);
     return 'Successfully added.';
   }

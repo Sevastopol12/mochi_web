@@ -10,20 +10,51 @@
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-  <header class="bg-black text-white p-3 d-flex justify-content-between align-items-center">
-    <div class="d-flex align-items-center">
-        <img src="https://i1.sndcdn.com/artworks-ym8AEsuyrB20dza8-3hlqSQ-t500x500.jpg" width="30" class="me-2">
-    <nav>
-        <a href="/product" class="nav-link text-white d-inline me-3">Mochi Truyền Thống</a>
-        <a href="#" class="nav-link text-white d-inline">Nama Mochi</a>
+  <!-- Navbar -->
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light py-3">
+      <div class="container-fluid">
+        <img src="/img/logo.png" alt="Logo" height="40" class="d-inline-block align-text-top">
+        <a class="navbar-brand" href="/">Mochi Shop</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navMenu"
+          aria-controls="navMenu"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Your cute nav snippet -->
+        <div class="collapse navbar-collapse" id="navMenu">
+          <ul class="navbar-nav ms-auto align-items-center cute-nav">
+            <li class="nav-item"><a class="nav-link" href="/">Trang chủ</a></li>
+            <li class="nav-item"><a class="nav-link active" href="/product">Sản phẩm</a></li>
+            <li class="nav-item">
+              <a class="nav-link" href="#"><i class="bi bi-cart-fill me-1"></i>Cục mochi dễ hưn >.<</a>
+            </li>
+            <li class="nav-item"><button class="btn cute-btn me-2">🎁 Khuyến mãi</button></li>
+            <li class="nav-item"><button id="yt" class="btn cute-btn danger me-2">▶ YouTube</button></li>
+            <li class="nav-item"><button class="btn cute-btn">🛒 Giỏ hàng</button></li>
+
+            <% if (session && session.user) { %>
+              <li class="nav-item user-welcome">
+                <span>Hi, <%= session.user.name %>! 😊</span>
+                <button onclick="location.href='/api/logout'"
+                        class="btn cute-btn logout ms-2">🚪 Logout</button>
+              </li>
+            <% } else { %>
+              <li class="nav-item">
+                <button id="openAuth" class="btn cute-btn ms-2">🔒 Đăng Nhập</button>
+              </li>
+            <% } %>
+          </ul>
+        </div>
+      </div>
     </nav>
-    </div>
-        <img src="/img/logo.png" alt="Logo" style="height: 60px;">
-        <div>
-        <button class="btn btn-outline-light me-2">Khuyến mãi</button>
-        <button id="yt" class="btn btn-danger">▶</button>
-        <button class="btn btn-outline-light ms-2">🛒</button>
-    </div>
   </header>
 
     <!-- Main Content -->
@@ -55,6 +86,10 @@
                 <div class="form-floating mb-3">
                     <input id="prod-price" type="number" step="0.01" class="form-control cute-input" placeholder="Price">
                     <label for="prod-price">Price</label>
+                </div>
+                <div class="form-floating mb-4">
+                    <input id="prod-qty" type="number" class="form-control cute-input" placeholder="Quantity">
+                    <label for="prod-qty">Quantity</label>
                 </div>
                 <div class="form-floating mb-4">
                     <input id="prod-qty" type="number" class="form-control cute-input" placeholder="Quantity">

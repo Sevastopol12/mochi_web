@@ -3,7 +3,7 @@ import User from '../Account/user.js';
 import Admin from '../Account/admin.js';
 import { ObjectId } from 'mongodb';
 
-class AccountManager extends BaseManager {
+export default class AccountManager extends BaseManager {
   /**
    * A class that works with the Account database, have all access and permission to manipulate the Account database
   */
@@ -13,30 +13,21 @@ class AccountManager extends BaseManager {
   }
 
   // Add an account
-  async add({name, password, email, phone_number }) {
-    let db = await this.dbPromise;
-    let accountsCollection = db.collection(this.collection);
-    let new_account = new User(name, password, email, phone_number);
-
-    try {
-      let result = await accountsCollection.insertOne(new_account);
-      new_account.id = result.insertedId.toString();
-      return this;
-    } 
-    
-    catch (error) {
-      console.error('Error adding account to database:', error);
-      throw error;
-    }
+  async add(name, password, email, phone_number) {
+    const newId = String(this.listAll().length + 1)
+    const db = await this.dbPromise;
+    const accounts = db.collection(this.collection);
+    const new_account = new User(newId, name, password, email, phone_number);
+    await accounts.insertOne(new_account);
   }
 
   // Find and returns account by username
-  async getByUsername(username) {
+  async getByUsername(name) {
     let db = await this.dbPromise;
     let accountsCollection = db.collection(this.collection);
 
     try {
-      let account = await accountsCollection.findOne({username: username});
+      let account = await accountsCollection.findOne({name: name});
       if (account) {
         return account.role === 'admin'
           ? new Admin(
@@ -44,7 +35,7 @@ class AccountManager extends BaseManager {
               account.password,
               account.email,
               account.phone_number,
-              account.username,
+              account.name,
               account._id.toString()
             )
           : new User(
@@ -52,14 +43,14 @@ class AccountManager extends BaseManager {
               account.password,
               account.email,
               account.phone_number,
-              account.username,
+              account.name,
               account._id.toString()
             );
       }
     } 
   
   catch (error) {
-    console.error(`Error getting account by username "${username}" from database:`, error);
+    console.error(`Error getting account by username "${name}" from database:`, error);
     throw error;
   }
   }
@@ -67,10 +58,10 @@ class AccountManager extends BaseManager {
   // Delete an account by its id
   async remove(id) {
     let db = await this.dbPromise; 
-    let accountsCollection = db.collection('accounts');
+    let accounts = db.collection(this.collection);
 
     try {
-      let result = await accountsCollection.deleteOne({ _id: ObjectId(id)});
+      let result = await accounts.deleteOne({ id: id});
       return result.deletedCount > 0;
     } 
     catch (error) {
@@ -78,6 +69,27 @@ class AccountManager extends BaseManager {
       throw error;
     }
   }
+
+  // List all accounts
+  async listAll() {
+    const db = await this.dbPromise;
+    const accounts = db.collection(this.collection);
+    return accounts.find({}).toArray() || null;
+  }
+  
+  // Authentication
+  async authenticate(email, password) {
+    const db = await this.dbPromise;
+    const accounts = db.collection(this.collection);
+    return await accounts.findOne({ email: email, password: password }) || null;
+  }
+
+  // Validate new account's password
+  async isExisted(email) {
+    const db = await this.dbPromise;
+    const accounts = db.collection(this.collection);
+    const existed = await accounts.findOne({email: email}) || null;
+    return existed ? 1: 0;
+  }
 }
 
-export default AccountManager;

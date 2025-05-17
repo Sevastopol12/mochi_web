@@ -1,4 +1,3 @@
-
 import ProductManager from '../models/Manager/product_manager.js';
 import ReveCounter from '../models/Manager/revenue_counter.js';
 
@@ -14,7 +13,7 @@ export async function addProduct(req, res) {
     if (exists) return res.status(400).json({ message: 'Product already exists.' });
 
     // Add product
-    const mess = await pm.add(productMeta.product_id, productMeta.name, productMeta.price, productMeta.quantity);
+    const mess = await pm.add(productMeta.product_id, productMeta.name, productMeta.price, productMeta.quantity, productMeta.description);
     return res.status(200).json({ message: mess });
   } 
   catch (err) {
