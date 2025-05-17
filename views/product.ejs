@@ -14,7 +14,8 @@
   <link rel="stylesheet" href="/css/styles.css" />
 </head>
 <body class="d-flex flex-column min-vh-100">
-
+  <!-- background layer -->
+  <div class="site-bg" style="background-image: url('/img/background.jpg');"></div>
   <!-- Navbar -->
   <header>
     <nav class="navbar navbar-expand-lg navbar-light bg-light py-3">
@@ -66,7 +67,7 @@
   <main class="container py-5 flex-grow-1">
     <div class="row gx-4">
       <!-- Products Column -->
-      <div class="col-md-9">
+      <div class="col-md-8">
         <h1 class="section-title">Mochi Truyền Thống</h1>
           <!-- Search Bar -->
           <div class="mb-4 position-relative">
@@ -88,7 +89,7 @@
         </div>
 
       <!-- Shopping Cart -->
-      <aside class="col-md-3">
+      <aside class="col-md-4">
         <div class="cart-sidebar p-4 bg-light">
           <div class="cart-heading text-center mb-3">
             <i class="bi bi-cart-fill fs-2"></i>
@@ -122,7 +123,7 @@
 
           <div class="d-flex justify-content-between align-items-center total-row mb-4">
             <span class="total-label">Total:</span>
-            <span id="cart-total" class="total-value">$0.00</span>
+            <span id="cart-total" class="total-value">0.00 VND</span>
           </div>
 
           <button id="commit-btn" class="btn place-order w-100">
@@ -231,7 +232,7 @@
   <script>
     let button = document.getElementById('yt');
     button.addEventListener('click', () => {
-    window.open('https://www.youtube.com/watch?v=cFAFHvJ1B_o', '_blank'); 
+    window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank'); 
     });
   </script>
 

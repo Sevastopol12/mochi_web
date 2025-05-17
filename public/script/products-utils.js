@@ -33,7 +33,7 @@ function renderCard(product) {
   cardImg.addEventListener('click', () => populateProductModal(product));
   
   clone.querySelector('.product-name').textContent = product.name;
-  clone.querySelector('.product-price').textContent = `$ ${product.price.toFixed(2)}`;
+  clone.querySelector('.product-price').textContent = `${product.price.toFixed(2)} VND`;
   clone.querySelector('.qty-value').textContent = 0;
   clone.querySelectorAll('.qty-btn').forEach(btn => {
     const delta = parseInt(btn.dataset.delta, 10);
@@ -80,6 +80,7 @@ export function populateProductModal(product) {
   btnOld.replaceWith(btnNew);
   btnNew.addEventListener('click', () => addToCart(product.id, 1));
 }
+
 
 /* ===========================
    Shopping Cart
@@ -129,7 +130,7 @@ function renderCart() {
   const total = document.getElementById('cart-total');
   ul.innerHTML = '';
   let sum = 0;
-  if (Object.keys(cart).length > 0) { cartEmptyParagraph.setAttribute('hidden', 'true'); }
+  if (Object.keys(cart).length >= 0) { cartEmptyParagraph.setAttribute('hidden', 'true'); }
 
   else {
       ul.innerHTML = '';
@@ -157,7 +158,7 @@ function renderCart() {
     sum += product.price * qty;
   });
 
-  total.textContent = `$${sum.toFixed(2)}`;
+  total.textContent = `${sum.toFixed(2)} VND`;
 }
 
 // Load cart
@@ -180,34 +181,16 @@ commitBtn.addEventListener('click', async () => {
 
 // POST 'api/order/': Commit order
 async function commitOrder() {
-  // Validate address
-  let my_address = address.value.trim();
-  if (!my_address || my_address.length < 1) {
-    document.getElementById('message').textContent = 'Please enter an address.';
-    return;
-  }
-
-  // Validate payment method
-  let my_payment = payment.dataset.value.trim();
-  if (!my_payment || my_payment.trim().length < 1) {
-    document.getElementById('message').textContent = 'Please select a payment method.';
-    return;
-  }
-
-  // Validate product
-  if (Object.keys(cart).length < 1) {
-    document.getElementById('message').textContent = 'Please select an item.';
-    return;
-  }
-
+  let my_address = address.value.trim() || null;
+  let my_payment = payment.dataset.value.trim() || null;
   let products = Object.values(cart).map(e => ({
     product: e.product,
     quantity:  e.qty
   }));
 
-  let orderMeta = {products, address: my_address, payment: my_payment};
+  products = products.length > 0? products : null;
 
-  let statusCode;
+  let orderMeta = {products, address: my_address, payment: my_payment};
 
   try {
     const res = await fetch('/api/order', {
@@ -220,7 +203,6 @@ async function commitOrder() {
     // Authorization
     if (res.status === 401) {
       document.getElementById('openAuth').click();
-      await refreshAll();
     } 
 
     if (!res.ok) throw new Error(data.message || 'Add failed');
@@ -262,7 +244,7 @@ modal.addEventListener('click', e => { if (e.target === modal) hideOrderModal();
 
 let allProducts;
 const searchInput = document.getElementById('product-search');
-const suggList    = document.getElementById('search-suggestions');
+const suggList = document.getElementById('search-suggestions');
 
 searchInput.addEventListener('input', () => {
   const q = searchInput.value.trim().toLowerCase();
