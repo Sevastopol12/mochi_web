@@ -81,6 +81,7 @@ export function populateProductModal(product) {
   btnNew.addEventListener('click', () => addToCart(product.id, 1));
 }
 
+
 /* ===========================
    Shopping Cart
    =========================== */
@@ -180,34 +181,16 @@ commitBtn.addEventListener('click', async () => {
 
 // POST 'api/order/': Commit order
 async function commitOrder() {
-  // Validate address
-  let my_address = address.value.trim();
-  if (!my_address || my_address.length < 1) {
-    document.getElementById('message').textContent = 'Please enter an address.';
-    return;
-  }
-
-  // Validate payment method
-  let my_payment = payment.dataset.value.trim();
-  if (!my_payment || my_payment.trim().length < 1) {
-    document.getElementById('message').textContent = 'Please select a payment method.';
-    return;
-  }
-
-  // Validate product
-  if (Object.keys(cart).length < 1) {
-    document.getElementById('message').textContent = 'Please select an item.';
-    return;
-  }
-
+  let my_address = address.value.trim() || null;
+  let my_payment = payment.dataset.value.trim() || null;
   let products = Object.values(cart).map(e => ({
     product: e.product,
     quantity:  e.qty
   }));
 
-  let orderMeta = {products, address: my_address, payment: my_payment};
+  products = products.length > 0? products : null;
 
-  let statusCode;
+  let orderMeta = {products, address: my_address, payment: my_payment};
 
   try {
     const res = await fetch('/api/order', {
@@ -262,7 +245,7 @@ modal.addEventListener('click', e => { if (e.target === modal) hideOrderModal();
 
 let allProducts;
 const searchInput = document.getElementById('product-search');
-const suggList    = document.getElementById('search-suggestions');
+const suggList = document.getElementById('search-suggestions');
 
 searchInput.addEventListener('input', () => {
   const q = searchInput.value.trim().toLowerCase();

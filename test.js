@@ -2,6 +2,8 @@ import AccountManager from "./models/Manager/account_manager.js";
 
 let am = new AccountManager();
 
-let a = await am.listAll();
+let a = {};
 
-a.forEach(x => console.log(x.role));
+let b = a.length > 0? a : null;
+
+console.log(b);
