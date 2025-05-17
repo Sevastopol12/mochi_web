@@ -6,12 +6,12 @@ const overlay = document.createElement('div');
 overlay.id = 'authModal';
 overlay.className = 'auth-modal';
 overlay.style.display = 'none';
+
 // Close handlers
 overlay.addEventListener('click', e => { if (e.target === overlay) overlay.style.display = 'none';});
 
-// init load
+// Init load
 loadAuthModal();
-
 export function loadAuthModal() {
   // Prevent multiple creations
   if (document.getElementById('authModal')) {overlay.style.display = 'flex'; return;};
@@ -58,6 +58,7 @@ export function loadAuthModal() {
         <button id="register" type="submit" class="auth-btn">Đăng Ký</button>
         <div class="auth-toggle">Đã có tài khoản? <span id="show-login">Đăng Nhập</span></div>
       </form>
+      <div id="message" class="text-center text-danger mt-2" role="alert"></div>
     </div>
   `;
 
@@ -106,8 +107,9 @@ export function loadAuthModal() {
       if (!res.ok) throw new Error(data.message);
       overlay.style.display = 'none';
       window.location.reload();
-    } catch (err) {
-      alert(err.message);
+    } 
+    catch (err) {
+      document.getElementById('message').textContent = err.message;
     }
   });
 
@@ -138,11 +140,12 @@ export function loadAuthModal() {
       const loginData = await loginRes.json();
       if (!loginRes.ok) throw new Error(loginData.message);
 
-      overlay.style.display = 'none';
+      container.style.display = 'none';
       window.location.reload();
 
-    } catch (err) {
-      alert(err.message);
+    } 
+    catch (err) {
+      document.getElementById('message').textContent = err.message;
     }
   });
 }

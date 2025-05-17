@@ -33,7 +33,7 @@ function renderCard(product) {
   cardImg.addEventListener('click', () => populateProductModal(product));
   
   clone.querySelector('.product-name').textContent = product.name;
-  clone.querySelector('.product-price').textContent = `$ ${product.price.toFixed(2)}`;
+  clone.querySelector('.product-price').textContent = `${product.price.toFixed(2)} VND`;
   clone.querySelector('.qty-value').textContent = 0;
   clone.querySelectorAll('.qty-btn').forEach(btn => {
     const delta = parseInt(btn.dataset.delta, 10);
@@ -130,7 +130,7 @@ function renderCart() {
   const total = document.getElementById('cart-total');
   ul.innerHTML = '';
   let sum = 0;
-  if (Object.keys(cart).length > 0) { cartEmptyParagraph.setAttribute('hidden', 'true'); }
+  if (Object.keys(cart).length >= 0) { cartEmptyParagraph.setAttribute('hidden', 'true'); }
 
   else {
       ul.innerHTML = '';
@@ -158,7 +158,7 @@ function renderCart() {
     sum += product.price * qty;
   });
 
-  total.textContent = `$${sum.toFixed(2)}`;
+  total.textContent = `${sum.toFixed(2)} VND`;
 }
 
 // Load cart
@@ -203,7 +203,6 @@ async function commitOrder() {
     // Authorization
     if (res.status === 401) {
       document.getElementById('openAuth').click();
-      await refreshAll();
     } 
 
     if (!res.ok) throw new Error(data.message || 'Add failed');
