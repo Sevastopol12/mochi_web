@@ -207,6 +207,8 @@ async function commitOrder() {
 
   let orderMeta = {products, address: my_address, payment: my_payment};
 
+  let statusCode;
+
   try {
     const res = await fetch('/api/order', {
       method: 'POST',
@@ -214,11 +216,14 @@ async function commitOrder() {
       body: JSON.stringify({ orderMeta })
     })
     const data = await res.json();
-    if (!res.ok) throw new Error(data.message || 'Add failed');
 
-    if (!data) {
+    // Authorization
+    if (res.status === 401) {
       document.getElementById('openAuth').click();
-    }
+      await refreshAll();
+    } 
+
+    if (!res.ok) throw new Error(data.message || 'Add failed');
     else {
       showOrderModal();
       await refreshAll();

@@ -47,7 +47,6 @@ app.get('/api/logout', logout);
 // Admin page
 app.get('/admin', checkAuth, checkRole, (req, res) => res.render('admin'));
 
-
 // Public API
 app.get('/api/products', listAll);
 
@@ -58,7 +57,7 @@ app.delete('/api/products/:id', checkAuth, checkRole, removeProduct);
 app.get('/api/revenue', checkAuth, checkRole, displayRevenue);
 
 // Order API
-app.post('/api/order', handleCommitOrder);
+app.post('/api/order', checkAuth, handleCommitOrder);
 
 
 // Catch-all JSON error handler for /api

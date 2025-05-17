@@ -4,7 +4,6 @@ const om = new OrderManager()
 
 export async function handleCommitOrder(req, res, next) {
     try {
-        if (!req.session.user) {return;}
         let { orderMeta } = req.body;
         let { products, address, payment } = orderMeta;
         // Create order

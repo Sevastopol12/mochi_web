@@ -50,6 +50,7 @@ export function checkAuth(req, res, next) {
   return res.redirect('/');
 }
 
+
 export function checkRole(req, res, next) {
   if (req.session.user.role === 'admin') { next(); }
   else {res.status(403).render('access-denied', { title: 'Admins Only' })};

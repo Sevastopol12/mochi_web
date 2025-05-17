@@ -1,4 +1,3 @@
-
 import ProductManager from '../models/Manager/product_manager.js';
 import ReveCounter from '../models/Manager/revenue_counter.js';
 
