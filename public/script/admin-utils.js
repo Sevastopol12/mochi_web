@@ -7,6 +7,7 @@ const idInput = document.getElementById('prod-id');
 const nameInput = document.getElementById('prod-name');
 const priceInput = document.getElementById('prod-price');
 const qtyInput = document.getElementById('prod-qty');
+const descriptionInput = document.getElementById('prod-des')
 
 // Buttons
 const addBtn = document.getElementById('btn-add');
@@ -41,7 +42,8 @@ async function addProduct() {
     product_id: idInput.value.trim(),
     name: nameInput.value.trim(),
     price: parseFloat(priceInput.value),
-    quantity: parseInt(qtyInput.value, 10) || 0
+    quantity: parseInt(qtyInput.value, 10) || 1,
+    description: descriptionInput.value.trim() || ''
   };
 
   try {

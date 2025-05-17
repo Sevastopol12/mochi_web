@@ -45,7 +45,8 @@ app.post('/api/register', register);
 app.get('/api/logout', logout);
 
 // Admin page
-app.get('/admin', checkRole, (req, res) => res.render('admin'));
+app.get('/admin', checkAuth, checkRole, (req, res) => res.render('admin'));
+
 
 // Public API
 app.get('/api/products', listAll);

@@ -68,8 +68,24 @@
       <!-- Products Column -->
       <div class="col-md-9">
         <h1 class="section-title">Mochi Truyền Thống</h1>
-        <div id="product-list" class="row g-4"></div>
-      </div>
+          <!-- Search Bar -->
+          <div class="mb-4 position-relative">
+            <input
+              type="text"
+              id="product-search"
+              class="form-control"
+              placeholder="Search for a mochi…"
+              autocomplete="off"
+            />
+            <ul
+              id="search-suggestions"
+              class="list-group position-absolute w-100"
+              style="z-index: 1000; display: none;"
+            ></ul>
+          </div>
+          <!-- Product list -->
+          <div id="product-list" class="row g-4"></div>
+        </div>
 
       <!-- Shopping Cart -->
       <aside class="col-md-3">
@@ -120,7 +136,7 @@
     </div>
   </main>
 
-  <!-- Templates -->
+  <!-- Product Templates -->
   <template id="product-template">
     <div class="col-sm-6 col-md-4 col-lg-3">
       <div class="card h-100 shadow-sm product-card" data-id="">
@@ -138,6 +154,60 @@
     </div>
   </template>
 
+  <!-- Product Info Modal -->
+  <div
+    class="modal fade mochi-modal"
+    id="productModal"
+    tabindex="-1"
+    aria-labelledby="productModalLabel"
+    style="display:none;"
+
+  >
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+      <div class="modal-content position-relative">
+        <!-- Sprinkles stripe -->
+        <div class="mochi-sprinkles"></div>
+        <!-- Mochi-close button -->
+        <button type="button" class="modal-close" data-bs-dismiss="modal">
+          <img src="/img/close.png" alt="Close" class="mochi-close-icon">
+        </button>
+
+        <div class="modal-body">
+          <div class="row g-4">
+            <!-- Image -->
+            <div class="col-12 col-md-5 text-center">
+              <img
+                id="modalProductImage"
+                src=""
+                alt="Product"
+                class="img-fluid rounded-4 modal-img"
+              >
+            </div>
+            <!-- Details -->
+            <div class="col-12 col-md-7 d-flex flex-column justify-content-center">
+             <h2 id="productModalLabel" class="modal-title mb-3 text-pink">
+                <span class="mochi-title-bubble">Product Name</span>
+              </h2>
+              <div id="modalProductDesc" class="modal-text mb-4 flex-grow-1 overflow-auto">
+                Product description goes here. It will scroll if too long.
+              </div>
+              <div class="d-flex align-items-center mb-4">
+                <span class="fs-3 text-deep-pink me-3">Price:</span>
+                <span id="modalProductPrice" class="fs-2 fw-bold text-deep-pink">$0.00</span>
+              </div>
+              <button
+                id="add-cart"
+                class="btn cute-btn btn-lg mx-auto px-5 add-cart-btn"
+              >
+                🛒 Add to Cart
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Commit alert form -->
   <div id="orderModal" class="modal" style="display: none;">
     <div class="modal-content">
@@ -149,11 +219,12 @@
     </div>
   </div>
 
+  <!-- Bootstrap -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
   <!-- Loads products -->
   <script type="module" src="/script/products-utils.js"></script>
-
+  <!-- Authentication -->
+  <script type="module" src="/script/auth-utils.js"></script>
   <!-- Authorization method -->
   <script type="module" src="/script/auth-utils.js"></script> 
   

@@ -2,6 +2,7 @@ import AccountManager from '../models/Manager/account_manager.js'
 
 const am = new AccountManager();
 
+//Login
 export async function login(req, res) {
   const { email, password } = req.body;
   if (!email || !password) { return res.status(400).json({ message: 'Email and password are required.' }); }
@@ -14,6 +15,7 @@ export async function login(req, res) {
   return res.json({ message: 'Login successful.' });
 }
 
+//Register
 export async function register(req, res) {
   const { name, email, password, phone_number } = req.body;
   if (!name || !email || !password || !phone_number) {
@@ -31,9 +33,10 @@ export function logout(req, res) {
   req.session.destroy(err => {
     if (err) return res.status(500).json({ message: 'Logout failed.' });
     res.clearCookie('connect.sid');
-    redirect('/');
+    res.redirect('/');
   });
 }
+
 
 export function checkAuth(req, res, next) {
   if (req.session && req.session.user) {
@@ -48,6 +51,6 @@ export function checkAuth(req, res, next) {
 }
 
 export function checkRole(req, res, next) {
-    if (req.session.role === 'admin') return next();
-    return res.status(403).render('access-denied', { title: 'Admins Only' });
-  };
+  if (req.session.user.role === 'admin') { next(); }
+  else {res.status(403).render('access-denied', { title: 'Admins Only' })};
+};

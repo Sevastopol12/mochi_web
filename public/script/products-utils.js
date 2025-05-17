@@ -1,6 +1,92 @@
 const container = document.getElementById('product-list');
 const messageEl = document.getElementById('message');
 
+/* ===========================
+   Products
+   =========================== */
+
+// Utility to render an arbitrary array of products
+function renderGrid(products) {
+  container.innerHTML = '';
+  products.forEach(p => container.appendChild(renderCard(p)));
+}
+
+// Render products
+function renderCard(product) {
+  // Get the product-card template, defined in the product page
+  const template = document.getElementById('product-template').content;
+  const clone = document.importNode(template, true);
+
+  // product card
+  const card = clone.querySelector('.product-card');
+  
+  card.id = `product-${product.id}`;
+  card.dataset.id = product.id;
+
+  const cardImg = clone.querySelector('.product-image');
+  cardImg.src   = product.imageUrl || '/img/mochi.jpeg';
+  cardImg.alt   = product.name;
+  // Use data-attributes to trigger Bootstrap modal UI
+  cardImg.setAttribute('data-bs-toggle', 'modal');
+  cardImg.setAttribute('data-bs-target', '#productModal');
+  // Populate modal before show
+  cardImg.addEventListener('click', () => populateProductModal(product));
+  
+  clone.querySelector('.product-name').textContent = product.name;
+  clone.querySelector('.product-price').textContent = `$ ${product.price.toFixed(2)}`;
+  clone.querySelector('.qty-value').textContent = 0;
+  clone.querySelectorAll('.qty-btn').forEach(btn => {
+    const delta = parseInt(btn.dataset.delta, 10);
+    btn.addEventListener('click', () => {
+      updateCart(product, delta);
+    });
+  });
+
+  return clone;
+}
+
+// Load products
+async function loadProducts() {
+  try {
+    const products = await (await fetch('/api/products')).json();
+    allProducts = products;
+
+    // No products
+    if (!products || products.length < 1) { container.innerHTML = "<p> No product to display. </p>"; }
+    container.innerHTML = '';
+    Object.values(products).forEach(product => {container.appendChild(renderCard(product));})
+  }
+  catch(err) { console.error('Error loading products or template:', err); container.innerHTML = err;}
+}
+
+// Display product info
+export function populateProductModal(product) {
+  // Get modal elements
+  const titleEl = document.getElementById('productModalLabel');
+  const imgEl   = document.getElementById('modalProductImage');
+  const descEl  = document.getElementById('modalProductDesc');
+  const priceEl = document.getElementById('modalProductPrice');
+
+  // Fill content
+  titleEl.textContent = product.name;
+  imgEl.src           = product.imageUrl || '/img/mochi.jpeg';
+  imgEl.alt           = product.name;
+  descEl.textContent  = product.description || 'No description available.';
+  priceEl.textContent = `$ ${product.price.toFixed(2)}`;
+
+  // Re-bind Add to Cart button
+  const btnOld = document.getElementById('add-cart');
+  const btnNew = btnOld.cloneNode(true);
+  btnOld.replaceWith(btnNew);
+  btnNew.addEventListener('click', () => addToCart(product.id, 1));
+}
+
+/* ===========================
+   Shopping Cart
+   =========================== */
+
+let cart = {}; 
+
 // Payment method
 const payment = document.querySelector('.btn-group .btn.active');
 const cashBtn = document.getElementById('pay-cash-btn');
@@ -16,62 +102,8 @@ const cardBtn = document.getElementById('pay-card-btn');
 // Address
 const address = document.getElementById('shipping-address')
 
-// Commit button
-const commitBtn  = document.getElementById('commit-btn');
-commitBtn.addEventListener('click', async () => {
-  commitOrder();
-});
-
-// Shopping cart
-let cart = {}; 
- 
-// Commit alert
-const modal = document.getElementById('orderModal');
-const closeIcon = document.getElementById('orderModalClose');
-const okButton = document.getElementById('orderModalOk');
-
-// Helper to display messages
-function showMessage(msg, type = 'danger') {
-  messageEl.textContent = msg;
-  messageEl.className = `alert alert-${type} mt-2`;
-  setTimeout(() => {
-    messageEl.textContent = '';
-    messageEl.className = '';
-  }, 5000);
-}
-
-// DOM response
-document.addEventListener('DOMContentLoaded', refreshAll)
-
-// Render items
-function renderCard(product) {
-  // Get the product-card template, defined in the product page
-  const template = document.getElementById('product-template').content;
-  const clone = document.importNode(template, true);
-
-  // product card
-  const card = clone.querySelector('.product-card');
-  card.id = `product-${product.id}`;
-  card.dataset.id = product.id;
-
-  clone.querySelector('.product-image').src = product.imageUrl || '/img/mochi.jpeg';
-  clone.querySelector('.product-name').textContent = product.name;
-  clone.querySelector('.product-price').textContent = `$ ${product.price.toFixed(2)}`;
-  clone.querySelector('.qty-value').textContent = 0;
-
-  clone.querySelectorAll('.qty-btn').forEach(btn => {
-    const delta = parseInt(btn.dataset.delta, 10);
-    btn.addEventListener('click', () => {
-      updateCart(product, delta);
-    });
-  });
-
-  return clone;
-}
-
-// Shopping cart 
+// Update cart
 function updateCart(product, delta) {
-
   // Update state
   const entry = cart[product.id] || { product, qty: 0 };
   entry.qty = Math.max(0, entry.qty + delta);
@@ -128,6 +160,24 @@ function renderCart() {
   total.textContent = `$${sum.toFixed(2)}`;
 }
 
+// Load cart
+function refreshCart() {
+  address.value = payment.value = '';
+  Object.keys(cart).forEach(k => delete cart[k]);
+  renderCart();
+}
+
+
+/* ===========================
+   Commit order
+   =========================== */
+
+// Commit button
+const commitBtn  = document.getElementById('commit-btn');
+commitBtn.addEventListener('click', async () => {
+  commitOrder();
+});
+
 // POST 'api/order/': Commit order
 async function commitOrder() {
   // Validate address
@@ -165,14 +215,25 @@ async function commitOrder() {
     })
     const data = await res.json();
     if (!res.ok) throw new Error(data.message || 'Add failed');
-    showOrderModal();
-    await refreshAll();
+
+    if (!data) {
+      document.getElementById('openAuth').click();
+    }
+    else {
+      showOrderModal();
+      await refreshAll();
+    }
   }
+
   catch (err) {
     showMessage(err.message);
   }
 }
 
+// Commit alert
+const modal = document.getElementById('orderModal');
+const closeIcon = document.getElementById('orderModalClose');
+const okButton = document.getElementById('orderModalOk');
 
 // Commit modal
 function showOrderModal() {
@@ -182,33 +243,73 @@ function hideOrderModal() {
   modal.style.display = 'none';
 }
 
-// close on “×” or “OK”
+// Close on “×” or “OK”
 closeIcon.addEventListener('click', hideOrderModal);
 okButton.addEventListener('click', hideOrderModal);
 
-// also close if user clicks outside the content
+// Close if user clicks outside the content
 modal.addEventListener('click', e => { if (e.target === modal) hideOrderModal(); });
 
-// Load products
-async function loadProducts() {
-  try {
-    const products = await (await fetch('/api/products')).json();
-    // No products
-    if (!products || products.length < 1) { container.innerHTML = "<p> No product to display. </p>"; }
-    container.innerHTML = '';
-    Object.values(products).forEach(product => {container.appendChild(renderCard(product));})
-  }
-  catch(err) { console.error('Error loading products or template:', err); container.innerHTML = err;}
-}
 
-// Load cart
-function refreshCart() {
-  address.value = payment.value = '';
-  Object.keys(cart).forEach(k => delete cart[k]);
-  renderCart();
-}
+/* ===========================
+   Search engine
+   =========================== */
+
+let allProducts;
+const searchInput = document.getElementById('product-search');
+const suggList    = document.getElementById('search-suggestions');
+
+searchInput.addEventListener('input', () => {
+  const q = searchInput.value.trim().toLowerCase();
+  if (!q) {
+    suggList.style.display = 'none';
+    renderGrid(allProducts);
+    return;
+  }
+  // Find up to 5 name matches
+  const matches = allProducts
+    .filter(p => p.name.toLowerCase().includes(q))
+    .slice(0, 10);
+
+  // Build suggestions dropdown
+  suggList.innerHTML = matches
+    .map(p => `<li class="list-group-item list-group-item-action" data-id="${p.id}">${p.name}</li>`)
+    .join('');
+  suggList.style.display = matches.length > 0 ? 'block' : 'none';
+
+  // When a suggestion is clicked
+  suggList.querySelectorAll('li').forEach(li => {
+    li.addEventListener('click', () => {
+      searchInput.value = li.textContent;
+      suggList.style.display = 'none';
+      // Render only the selected product
+      const prod = allProducts.find(x => x.id == li.dataset.id);
+      renderGrid(prod ? [prod] : []);
+    });
+  });
+});
+
+
+/* ===========================
+   Helpers
+   =========================== */
 
 // Refresh page 
 async function refreshAll() {
     await Promise.all([refreshCart()], [loadProducts()]);
 }
+
+// Helper to display messages
+function showMessage(msg, type = 'danger') {
+  messageEl.textContent = msg;
+  messageEl.className = `alert alert-${type} mt-2`;
+  setTimeout(() => {
+    messageEl.textContent = '';
+    messageEl.className = '';
+  }, 5000);
+}
+
+// DOM response
+document.addEventListener('DOMContentLoaded', refreshAll)
+
+
