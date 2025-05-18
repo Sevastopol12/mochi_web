@@ -25,7 +25,7 @@ export function loadAuthModal() {
       <div id="tab-register" class="auth-tab">Đăng Ký</div>
     </div>
     <div class="auth-forms">
-      <img src="https://cdn-icons-png.flaticon.com/512/1046/1046784.png" alt="Mochi" class="auth-icon" />
+      <img src="/img/login-logo.png" alt="Mochi" class="auth-icon" />
       <form id="form-login" class="auth-form auth-form--active">
         <div class="auth-field">
           <label for="login-email">Email</label>
@@ -58,7 +58,7 @@ export function loadAuthModal() {
         <button id="register" type="submit" class="auth-btn">Đăng Ký</button>
         <div class="auth-toggle">Đã có tài khoản? <span id="show-login">Đăng Nhập</span></div>
       </form>
-      <div id="message" class="text-center text-danger mt-2" role="alert"></div>
+      <div id="auth-message" class="text-center text-danger mt-2" role="alert"></div>
     </div>
   `;
 
@@ -109,7 +109,7 @@ export function loadAuthModal() {
       window.location.reload();
     } 
     catch (err) {
-      document.getElementById('message').textContent = err.message;
+      document.getElementById('auth-message').textContent = err.message;
     }
   });
 
@@ -145,7 +145,7 @@ export function loadAuthModal() {
 
     } 
     catch (err) {
-      document.getElementById('message').textContent = err.message;
+      document.getElementById('auth-message').textContent = err.message;
     }
   });
 }

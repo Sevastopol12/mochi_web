@@ -78,7 +78,7 @@ export function populateProductModal(product) {
   const btnOld = document.getElementById('add-cart');
   const btnNew = btnOld.cloneNode(true);
   btnOld.replaceWith(btnNew);
-  btnNew.addEventListener('click', () => addToCart(product.id, 1));
+  btnNew.addEventListener('click', () => {updateCart(product, 1);});
 }
 
 
@@ -203,6 +203,7 @@ async function commitOrder() {
     // Authorization
     if (res.status === 401) {
       document.getElementById('openAuth').click();
+      return;
     } 
 
     if (!res.ok) throw new Error(data.message || 'Add failed');

@@ -17,10 +17,9 @@ export async function login(req, res) {
 
 //Register
 export async function register(req, res) {
-  const { name, email, password, phone_number } = req.body;
-  if (!name || !email || !password || !phone_number) {
-    return res.status(400).json({ message: 'Name, email, phone number and password are required.' });
-  }
+  const { name, email, password, phone_number, role } = req.body;
+  role = role || 'user';
+
   const exists = await am.isExisted(email);
   if (exists) {
     return res.status(409).json({ message: 'Email already registered.' });
@@ -39,15 +38,10 @@ export function logout(req, res) {
 
 
 export function checkAuth(req, res, next) {
-  if (req.session && req.session.user) {
-    return next();
-  }
-  // Always return JSON for API routes
-  if (req.path.startsWith('/api/')) {
-    return res.status(401).json({ message: 'Unauthorized.' });
-  }
-  // Otherwise, redirect to login page
-  return res.redirect('/');
+  if (req.session && req.session.user) { return next(); }
+  // Return JSON if its an API call
+  if (req.path.startsWith('/api')) { return res.status(401).json({message: "Unauthorized."}); }
+  res.render('access-denied', {title: 'Admins Only.'})
 }
 
 

@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "type": "module",
   "main": "server.js",
+  "homepage": "https://Sevastopol12.github.io/mochi_web",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
-    
   },
   "keywords": [],
   "author": "",
@@ -24,4 +24,5 @@
     "@types/express": "^5.0.1",
     "@types/node": "^22.15.16"
   }
+  
 }

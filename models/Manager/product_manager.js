@@ -27,12 +27,28 @@ export default class ProductManager extends BaseManager {
     await products.deleteOne({ id: product_id });
   }
 
-  // Update product quantity
-  async updateQuantity(product, add_quantity) {
+  // Update product
+  async updateProduct(product, add_quantity, new_price, new_description) {
     const db = await this.dbPromise;
     const products = db.collection(this.collection);
-    const newQuantity = product.quantity + add_quantity;
-    await products.updateOne({ id: product.id }, { $set: { quantity: newQuantity } });
+    
+    //update quantity
+    const updateSet = {};
+
+    // add quantity
+    if (add_quantity !== null && !isNaN(add_quantity)) {
+      updateSet.quantity = product.quantity + add_quantity
+    }
+    // new price
+    if (new_price !== null && !isNaN(new_price)) {
+      updateSet.price = new_price;
+    }
+    // new description
+    if (new_description !== null) {
+      updateSet.description = new_description;
+    }
+    
+    await products.updateOne({ id: product.id }, { $set: updateSet });
   }
 
   // List all existing products
