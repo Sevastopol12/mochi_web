@@ -1,6 +1,6 @@
-import AppConfig from "../../config/dbConfig.js"
+import AppConfig from "../config/dbConfig.js"
 
-export default class BaseManager {
+export default class BaseModel {
     /**
      * Design to be an abstract class, defining fundamental attributes/methods for Manager-based classes
      */

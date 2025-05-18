@@ -1,6 +1,6 @@
-import OrderManager from "../models/Manager/order_manager.js";
+import OrderModel from "../models/orderModel.js";
 
-const om = new OrderManager()
+const om = new OrderModel()
 
 export async function handleCommitOrder(req, res, next) {
     try {

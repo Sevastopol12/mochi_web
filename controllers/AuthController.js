@@ -1,6 +1,6 @@
-import AccountManager from '../models/Manager/account_manager.js'
+import AccountModel from '../models/accountModel.js'
 
-const am = new AccountManager();
+const am = new AccountModel();
 
 //Login
 export async function login(req, res) {

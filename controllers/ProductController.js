@@ -1,10 +1,10 @@
-import ProductManager from "../models/Manager/product_manager.js";
+import ProductModel from "../models/productModel.js";
 
 /**
  * A controller that defines routing's actions for loading product page
  */
 
-const pm = new ProductManager();
+const pm = new ProductModel();
 
 // Render product page
 export async function renderProductPage(req, res, next) {
