@@ -43,8 +43,7 @@
             <% if (session && session.user) { %>
               <li class="nav-item user-welcome">
                 <span>Hi, <%= session.user.name %>! 😊</span>
-                <button onclick="location.href='/api/logout'"
-                        class="btn cute-btn logout ms-2">🚪 Logout</button>
+                <button onclick="location.href='/api/logout'" class="btn cute-btn logout ms-2">🚪 Logout</button>
               </li>
             <% } else { %>
               <li class="nav-item">
@@ -84,16 +83,16 @@
                     <label for="prod-name">Name</label>
                 </div>
                 <div class="form-floating mb-3">
-                    <input id="prod-price" type="number" step="0.01" class="form-control cute-input" placeholder="Price">
+                    <input id="prod-price" type="number" step="10000" class="form-control cute-input" placeholder="Price">
                     <label for="prod-price">Price</label>
                 </div>
                 <div class="form-floating mb-4">
                     <input id="prod-qty" type="number" class="form-control cute-input" placeholder="Quantity">
                     <label for="prod-qty">Quantity</label>
                 </div>
-                <div class="form-floating mb-4">
-                    <input id="prod-qty" type="number" class="form-control cute-input" placeholder="Quantity">
-                    <label for="prod-qty">Quantity</label>
+                <div class="form-floating mb-3">
+                    <input id="prod-description" type="text" class="form-control cute-input" placeholder="Description">
+                    <label for="prod-description">Description</label>
                 </div>
                 <div class="d-flex flex-wrap gap-2 justify-content-center">
                     <button id="btn-add" class="btn btn-pink">Add</button>
@@ -133,7 +132,6 @@
 
 
   <script type="module" src="/script/admin-utils.js"></script>
-
   <script>
     let button = document.getElementById('yt');
     button.addEventListener('click', () => {
