@@ -24,15 +24,12 @@ export async function addProduct(req, res) {
 export async function updateProduct(req, res) {
   try {
     const { id } = req.params;
-    const { quantity } = req.body;
-    if (quantity == null || isNaN(quantity)) {
-      return res.status(400).json({ message: 'Valid quantity is required.' });
-    }
+    const { productMeta } = req.body;
+
     const product = await pm.findById(id);
-    if (!product) {
-      return res.status(404).json({ message: 'Product not found.' });
-    }
-    await pm.updateQuantity(product, parseInt(quantity, 10));
+    if (!product) { return res.status(404).json({ message: 'Product not found.' }); }
+    
+    await pm.updateProduct(product, parseInt(productMeta.quantity, 10), parseFloat(productMeta.price), productMeta.description);
     res.json({ message: 'Quantity updated successfully.' });
   } catch (err) {
     res.status(500).json({ message: err.message });
