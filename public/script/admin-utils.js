@@ -7,7 +7,7 @@ const idInput = document.getElementById('prod-id');
 const nameInput = document.getElementById('prod-name');
 const priceInput = document.getElementById('prod-price');
 const qtyInput = document.getElementById('prod-qty');
-const descriptionInput = document.getElementById('prod-des')
+const descriptionInput = document.getElementById('prod-description')
 
 // Buttons
 const addBtn = document.getElementById('btn-add');
@@ -43,7 +43,7 @@ async function addProduct() {
     name: nameInput.value.trim(),
     price: parseFloat(priceInput.value),
     quantity: parseInt(qtyInput.value, 10) || 1,
-    description: descriptionInput.value.trim() || ''
+    description: descriptionInput.value.trim() || null
   };
 
   try {
@@ -64,14 +64,22 @@ async function addProduct() {
 
 // POST: update product quantity
 async function updateProduct() {
+  // Product ID
   const id = idInput.value.trim();
-  const quantity = parseInt(qtyInput.value, 10);
-  if (!id || isNaN(quantity)) {
-    return showMessage('Valid ID and quantity are required.');
+  // Update values
+  const productMeta = {
+    price: parseFloat(priceInput.value),
+    quantity: parseInt(qtyInput.value, 10),
+    description: descriptionInput.value.trim()
+  };
+
+  const noUpdates = (isNaN(productMeta.quantity) && isNaN(productMeta.price) && !productMeta.description);
+  if (!id || noUpdates) {
+    return showMessage('Valid ID and updates are required.');
   }
   try {
     const res = await fetch(`/api/products/${encodeURIComponent(id)}`, {
-      method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ quantity }),
+      method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ productMeta }),
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.message);
@@ -103,7 +111,7 @@ function renderCard(product) {
   clone.querySelector('.product-id').textContent = `ID: ${product.id}`;
   clone.querySelector('.product-name').textContent = product.name;
   clone.querySelector('.product-price').textContent = `$${product.price.toFixed(2)}`;
-  clone.querySelector('.qty-value').textContent = `In stock: ${product.quantity}`;
+  clone.querySelector('.qty-value').textContent = `In stock: ${parseInt(product.quantity)}`;
   return clone;
 }
 
@@ -129,5 +137,5 @@ async function loadRevenue() {
 // Refresh page
 async function refreshAll() {
   await Promise.all([loadProducts()]);
-  idInput.value = nameInput.value = priceInput.value = qtyInput.value = '';
+  idInput.value = nameInput.value = priceInput.value = qtyInput.value = descriptionInput.value = '';
 }
