@@ -13,11 +13,13 @@ export default class AccountManager extends BaseManager {
   }
 
   // Add an account
-  async add(name, password, email, phone_number) {
+  async add(name, password, email, phone_number, role) {
     const newId = String(this.listAll().length + 1)
     const db = await this.dbPromise;
     const accounts = db.collection(this.collection);
-    const new_account = new User(newId, name, password, email, phone_number);
+    let new_account;
+    if (role === 'user') {new_account = new User(newId, name, password, email, phone_number, role);}
+    else {new_account = new Admin(newId, name, password, email, phone_number, role);}
     await accounts.insertOne(new_account);
   }
 
