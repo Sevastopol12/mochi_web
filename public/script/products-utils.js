@@ -87,6 +87,24 @@ export function populateProductModal(product) {
    =========================== */
 
 let cart = {}; 
+const cartModalEl = document.getElementById('cartModal');
+const cartModal = bootstrap.Modal.getOrCreateInstance(cartModalEl);
+const openCartBtn = document.getElementById('openCartBtn'); // Make sure this ID exists
+
+if (openCartBtn && cartModalEl) {
+    openCartBtn.addEventListener('click', () => {
+        cartModal.show();
+        cartModalEl.removeAttribute('inert');
+    });
+
+    cartModalEl.addEventListener('hidden.bs.modal', () => {
+        cartModalEl.setAttribute('inert', 'true');
+        openCartBtn.focus();
+    });
+
+    // Initially set the modal to inert
+    cartModalEl.setAttribute('inert', 'true');
+}
 
 // Payment method
 const payment = document.querySelector('.btn-group .btn.active');
@@ -117,6 +135,9 @@ function updateCart(product, delta) {
 
   // Re-render cart sidebar
   renderCart();
+  const totalItems = Object.values(cart).reduce((sum, e) => sum + e.qty, 0);
+  cartCount.textContent = totalItems;
+  cartCount.style.display = totalItems ? 'inline-block' : 'none';
 }
 
 // Render cart item
@@ -202,6 +223,7 @@ async function commitOrder() {
 
     // Authorization
     if (res.status === 401) {
+      openCartBtn.click();
       document.getElementById('openAuth').click();
       return;
     } 
@@ -224,11 +246,12 @@ const closeIcon = document.getElementById('orderModalClose');
 const okButton = document.getElementById('orderModalOk');
 
 // Commit modal
+const orderModalInstance = new bootstrap.Modal(modal);
 function showOrderModal() {
-  modal.style.display = 'flex';
+  orderModalInstance.show(); 
 }
 function hideOrderModal() {
-  modal.style.display = 'none';
+  orderModalInstance.hide();
 }
 
 // Close on “×” or “OK”
