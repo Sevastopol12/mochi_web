@@ -153,7 +153,6 @@ body {
 /* ==========================
    Product 
    ========================== */
-   
 
 .product-card {
   border-radius: 16px;
@@ -367,6 +366,12 @@ body {
   justify-content: flex-end; /* Push buttons to the right if any */
 }
 
+button.add-cart-btn.btn-pink {
+  font-size: 1.2rem;
+  padding: 0.25rem 0.5rem;
+  line-height: 2;
+}
+
 
 /* ==========================
    Modal Dialog
@@ -378,9 +383,8 @@ body {
   left: 0; top: 0;
   width: 100%; height: 100%;
   background-color: rgba(0,0,0,0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: center !important;
+  justify-content: center !important;
   font-family: 'Fredoka', sans-serif;
 }
 
@@ -441,6 +445,11 @@ body {
   height: 100px;
 }
 
+#orderModal.modal.show {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
 /* ==========================
    Authetication
    ========================== */
@@ -775,7 +784,6 @@ body {
   }
 }
 
-
 /* Horizontal scroller becomes vertical list on <768px */
 @media (max-width: 767px) {
   .horizontal-scroll-wrapper {
@@ -790,12 +798,11 @@ body {
   }
 }
 
-
 /* =====================
    Mobile Responsive 
    ===================== */
 
-/* 2) Hero slider: cap its height & scaling */
+/* Hero slider: cap its height & scaling */
 @media (max-width: 992px) {
   .slider,
   .mochi-slider {
@@ -812,7 +819,7 @@ body {
   }
 }
 
-/* 3) Make your horizontal scroller stack as cards */
+/* Make your horizontal scroller stack as cards */
 @media (max-width: 767px) {
   .horizontal-scroll-wrapper {
     display: grid !important;
@@ -827,7 +834,7 @@ body {
   }
 }
 
-/* 4) Hero text slide-ins: wrap softly */
+/* Hero text slide-ins: wrap softly */
 @media (max-width: 576px) {
   .mochi-slide-in {
     display: block;   /* each word on its own line */
@@ -838,7 +845,7 @@ body {
   }
 }
 
-/* 5) Admin & Product grids: stack under 768px */
+/* Admin & Product grids: stack under 768px */
 @media (max-width: 767px) {
   .row.g-4 > .col-lg-8,
   .row.g-4 > .col-lg-4 {
@@ -847,19 +854,19 @@ body {
   }
 }
 
-/* 6) Footer always sticks to bottom on short pages */
+/* Footer always sticks to bottom on short pages */
 body.d-flex.flex-column.min-vh-100 main.flex-grow-1 {
   margin-bottom: 2rem;
 }
 
-/* 7) Site-bg overlay: switch off on mobile for clarity */
+/* Site-bg overlay: switch off on mobile for clarity */
 @media (max-width: 576px) {
   .site-bg {
     display: none;
   }
 }
 
-/* 8) Adjust font sizes globally */
+/* Adjust font sizes globally */
 @media (max-width: 768px) {
   .section-title { font-size: 1.6rem; }
 }
