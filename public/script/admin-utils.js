@@ -19,7 +19,7 @@ addBtn.addEventListener('click', addProduct);
 updateBtn.addEventListener('click', updateProduct);
 removeBtn.addEventListener('click', removeProduct);
 
-// DOM responses
+// DOM response
 document.addEventListener('DOMContentLoaded', refreshAll);
 
 // Helper to display messages
@@ -32,7 +32,9 @@ function showMessage(msg, type = 'danger') {
   }, 5000);
 }
 
-// POST: add product
+/* ===========================
+   POST: Add product
+   =========================== */
 async function addProduct() {
   // Validation
   if (!nameInput.value.trim()) return showMessage('Name is required');
@@ -62,7 +64,9 @@ async function addProduct() {
   }
 }
 
-// POST: update product quantity
+/* ===========================
+   PUT: Update product
+   =========================== */
 async function updateProduct() {
   // Product ID
   const id = idInput.value.trim();
@@ -73,6 +77,7 @@ async function updateProduct() {
     description: descriptionInput.value.trim()
   };
 
+  // raise error if commit no updates
   const noUpdates = (isNaN(productMeta.quantity) && isNaN(productMeta.price) && !productMeta.description);
   if (!id || noUpdates) {
     return showMessage('Valid ID and updates are required.');
@@ -88,7 +93,10 @@ async function updateProduct() {
   } catch (e) { showMessage(e.message); }
 }
 
-// POST: delete product
+/* ===========================
+   POST: Remove product
+   =========================== */
+
 async function removeProduct() {
   const id = idInput.value.trim();
   if (!id) return showMessage('ID is required.');
@@ -101,7 +109,9 @@ async function removeProduct() {
   } catch (e) { showMessage(e.message); }
 }
 
-// Render and load
+/* ===========================
+   Display product
+   =========================== */
 function renderCard(product) {
   const template = document.getElementById('product-template').content;
   const clone = document.importNode(template, true);

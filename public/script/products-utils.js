@@ -7,14 +7,8 @@ const messageEl = document.getElementById('message');
    Products
    =========================== */
 
-// Utility to render an arbitrary array of products
-function renderGrid(products) {
-  container.innerHTML = '';
-  products.forEach(p => container.appendChild(renderCard(p)));
-}
-
 // Render products
-function renderCard(product) {
+export function renderCard(product) {
   const template = document.getElementById('product-template').content;
   const clone    = document.importNode(template, true);
   const card     = clone.querySelector('.product-card');
@@ -43,15 +37,14 @@ function renderCard(product) {
 }
 
 // Load products
-async function loadProducts() {
+export async function loadProducts() {
   try {
     const products = await (await fetch('/api/products')).json();
     allProducts = products;
 
     // No products
     if (!products || products.length < 1) { container.innerHTML = "<p> No product to display. </p>"; }
-    container.innerHTML = '';
-    Object.values(products).forEach(product => {container.appendChild(renderCard(product));})
+    renderGrid(products);
   }
   catch(err) { console.error('Error loading products or template:', err); container.innerHTML = err;}
 }
@@ -86,6 +79,12 @@ export function populateProductModal(product) {
 let allProducts;
 const searchInput = document.getElementById('product-search');
 const suggList = document.getElementById('search-suggestions');
+
+// Utility to render an arbitrary array of products
+function renderGrid(products) {
+  container.innerHTML = '';
+  products.forEach(p => container.appendChild(renderCard(p)));
+}
 
 searchInput.addEventListener('input', () => {
   const q = searchInput.value.trim().toLowerCase();
