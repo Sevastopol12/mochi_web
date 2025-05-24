@@ -8,7 +8,7 @@ export default class ReveCounter {
     constructor() {
         this.config = new AppConfig();
         this.db_promise = this.config.initDB();
-        this.order_collection = 'order';
+        this.order_collection = 'orders';
         this.sales_collection = 'sales';
     }
 
